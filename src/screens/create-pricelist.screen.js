@@ -1,0 +1,205 @@
+import React from 'react';
+import {
+  StyleSheet,
+  ScrollView,
+  View,
+  Text,
+  TextInput,
+  Picker,
+  TouchableOpacity,
+} from 'react-native';
+import { Formik } from 'formik';
+import firebase from 'react-native-firebase';
+import { theme } from '../theme';
+
+class CreatePricelistScreen extends React.Component {
+  static navigationOptions = {
+    title: 'Buat Daftar Harga',
+  };
+
+  handleSubmit = async (values, actions) => {
+    const user = firebase.auth().currentUser;
+    await firebase
+      .firestore()
+      .collection('users')
+      .doc(user.uid)
+      .collection('daftar-harga')
+      .add(values);
+    actions.setSubmitting(false);
+    this.props.navigation.goBack();
+  };
+
+  render() {
+    return (
+      <Formik
+        initialValues={{
+          nama: '',
+          jenisMakeup: 'Natural',
+          layanan: '',
+          harga: '',
+          lamaPengerjaan: '',
+        }}
+        onSubmit={this.handleSubmit}
+      >
+        {({
+          handleSubmit,
+          values,
+          handleChange,
+          handleBlur,
+          setFieldValue,
+        }) => (
+          <React.Fragment>
+            <ScrollView>
+              <View style={styles.formRoot}>
+                <View style={styles.formInputWrapper}>
+                  <Text style={styles.label}>Nama Makeup</Text>
+                  <TextInput
+                    style={[
+                      styles.formInputMargin,
+                      styles.formInputPadding,
+                      styles.inputBorder,
+                    ]}
+                    placeholder="contoh: Daily Makeup"
+                    value={values.nama}
+                    onChangeText={handleChange('nama')}
+                    onBlur={handleBlur('nama')}
+                  />
+                </View>
+                <View style={styles.formInputWrapper}>
+                  <Text style={styles.label}>Jenis Makeup</Text>
+                  <View
+                    style={[styles.formPickerInputWrapper, styles.inputBorder]}
+                  >
+                    <Picker
+                      selectedValue={values.jenisMakeup}
+                      onValueChange={val => setFieldValue('jenisMakeup', val)}
+                    >
+                      <Picker.Item label="Natural" value="Natural" />
+                      <Picker.Item label="Flawless" value="Flawless" />
+                      <Picker.Item label="Korean" value="Korean" />
+                      <Picker.Item label="Payas Agung" value="Payas Agung" />
+                      <Picker.Item label="Graduation" value="Graduation" />
+                    </Picker>
+                  </View>
+                </View>
+                <View style={styles.formInputWrapper}>
+                  <Text style={styles.label}>Layanan</Text>
+                  <TextInput
+                    style={[
+                      styles.formInputMargin,
+                      styles.formInputPadding,
+                      styles.inputBorder,
+                    ]}
+                    placeholder="contoh: Hairdo & Makeup"
+                    value={values.layanan}
+                    onChangeText={handleChange('layanan')}
+                    onBlur={handleBlur('layanan')}
+                  />
+                </View>
+                <View style={styles.formInputWrapper}>
+                  <Text style={styles.label}>Harga</Text>
+                  <TextInput
+                    style={[
+                      styles.formInputMargin,
+                      styles.formInputPadding,
+                      styles.inputBorder,
+                    ]}
+                    placeholder="contoh: 100000"
+                    value={values.harga}
+                    onChangeText={handleChange('harga')}
+                    onBlur={handleBlur('harga')}
+                  />
+                </View>
+                <View style={styles.formInputWrapper}>
+                  <Text style={styles.label}>Lama Pengerjaan</Text>
+                  <View
+                    style={[
+                      styles.inputBorder,
+                      styles.inputMenitWrapper,
+                      styles.formInputMargin,
+                    ]}
+                  >
+                    <TextInput
+                      style={[styles.inputMenit, styles.formInputPadding]}
+                      placeholder="contoh: 60"
+                      value={values.lamaPengerjaan}
+                      onChangeText={handleChange('lamaPengerjaan')}
+                      onBlur={handleBlur('lamaPengerjaan')}
+                    />
+                    <View style={styles.inputMenitTextWrapper}>
+                      <Text style={styles.inputMenitText}>menit</Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </ScrollView>
+            <TouchableOpacity onPress={handleSubmit}>
+              <View style={styles.buttonWrapper}>
+                <Text style={styles.buttonText}>Buat</Text>
+              </View>
+            </TouchableOpacity>
+          </React.Fragment>
+        )}
+      </Formik>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  formRoot: {
+    padding: 16,
+  },
+  label: {
+    fontSize: 16,
+  },
+  formInputWrapper: {
+    marginBottom: 16,
+  },
+  formInputMargin: {
+    marginVertical: 4,
+  },
+  formInputPadding: {
+    paddingHorizontal: 16,
+  },
+  formPickerInputWrapper: {
+    marginVertical: 4,
+    paddingHorizontal: 8,
+  },
+  inputBorder: {
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: '#ccc',
+    borderRadius: 4,
+  },
+  buttonWrapper: {
+    backgroundColor: theme.colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 48,
+  },
+  buttonText: {
+    color: '#fff',
+    textTransform: 'uppercase',
+    fontWeight: 'bold',
+    letterSpacing: 1,
+  },
+  inputMenitWrapper: {
+    flexDirection: 'row',
+  },
+  inputMenit: {
+    flex: 1,
+  },
+  inputMenitTextWrapper: {
+    backgroundColor: '#ccc',
+    paddingHorizontal: 16,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  inputMenitText: {
+    textTransform: 'uppercase',
+    fontSize: 12,
+  },
+});
+
+export default CreatePricelistScreen;

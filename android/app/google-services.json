@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "651597269296",
+    "firebase_url": "https://griyamua-dev.firebaseio.com",
+    "project_id": "griyamua-dev",
+    "storage_bucket": "griyamua-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:651597269296:android:2946749ef74b123f",
+        "android_client_info": {
+          "package_name": "com.griyamua"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "651597269296-fkdsnh4jqs7lhdlvualh231j0l9ud1gf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.griyamua",
+            "certificate_hash": "76a6aaea7b8ad10050e784e54ebe1eb91f67c211"
+          }
+        },
+        {
+          "client_id": "651597269296-1sbu7j3ccdjrbkh67sdhokh6r3dqrv8d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGXXOzPCa7DZ0DXaAoV-yiq0BgCT6EAsc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "651597269296-1sbu7j3ccdjrbkh67sdhokh6r3dqrv8d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

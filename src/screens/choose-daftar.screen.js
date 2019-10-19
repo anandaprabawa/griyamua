@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   },
 });
 
-class ChooseAuthScreen extends React.Component {
+class ChooseDaftarScreen extends React.Component {
   static navigationOptions = {
     header: null,
   };
@@ -76,17 +76,15 @@ class ChooseAuthScreen extends React.Component {
         <View style={styles.btnWrapper}>
           <TouchableOpacity
             style={styles.button}
-            onPress={this.handleClickAuth('Login')}
+            onPress={this.handleClickAuth('DaftarMUA')}
           >
-            <Text style={styles.buttonText}>Masuk</Text>
+            <Text style={styles.buttonText}>Daftar sebagai MUA</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.button, styles.outlineBtn]}
-            onPress={this.handleClickAuth('ChooseDaftar')}
+            style={[styles.button]}
+            onPress={this.handleClickAuth('DaftarPelanggan')}
           >
-            <Text style={[styles.buttonText, styles.outlineBtnText]}>
-              Daftar
-            </Text>
+            <Text style={[styles.buttonText]}>Daftar sebagai Pelanggan</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -94,4 +92,4 @@ class ChooseAuthScreen extends React.Component {
   }
 }
 
-export default ChooseAuthScreen;
+export default ChooseDaftarScreen;

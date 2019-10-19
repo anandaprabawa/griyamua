@@ -28,11 +28,27 @@ import SearchResultScreen from './screens/search-result.screen';
 import BeriUlasanScreen from './screens/beri-ulasan.screen';
 import MainMua from './mua-routes';
 import PesanScreen from './screens/pesan.screen';
+import LupaPassword from './screens/lupa-password.screen';
+import ConfirmPassword from './screens/confirm-password.screen';
+import ChooseDaftar from './screens/choose-daftar.screen';
+import DaftarPelanggan from './screens/daftar-pelanggan.screen';
+import DaftarPelanggan2 from './screens/daftar-pelanggan2.screen';
+import DaftarMUA from './screens/daftar-mua.screen';
+import DaftarMUA2 from './screens/daftar-mua2.screen';
+import DaftarMUA3 from './screens/daftar-mua3.screen';
 
 const AuthNavigator = createStackNavigator({
   ChooseAuth: ChooseAuthScreen,
+  ChooseDaftar,
   Login: LoginScreen,
   Signup: SignupScreen,
+  LupaPassword,
+  ConfirmPassword,
+  DaftarPelanggan,
+  DaftarPelanggan2,
+  DaftarMUA,
+  DaftarMUA2,
+  DaftarMUA3,
 });
 
 const HomeStack = createStackNavigator({

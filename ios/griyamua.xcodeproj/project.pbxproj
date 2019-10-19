@@ -61,6 +61,7 @@
 		87F364E555224A599F8C2523 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 696DE5A7B562432196FDCC8B /* SimpleLineIcons.ttf */; };
 		3423225F907845A194161A4A /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF972FCB03374A09BD417635 /* Zocial.ttf */; };
 		B36C8E11389B46CEA43D3096 /* libimageCropPicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 32C2216D3F454152A0E96DDB /* libimageCropPicker.a */; };
+		31588319DE99466CBCE4E4A5 /* libRNCReactNativeCheckbox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BA9212DD8E584E74A4E46F31 /* libRNCReactNativeCheckbox.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -395,6 +396,8 @@
 		FF972FCB03374A09BD417635 /* Zocial.ttf */ = {isa = PBXFileReference; name = "Zocial.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		6F6AD6E871764BD58E32458F /* imageCropPicker.xcodeproj */ = {isa = PBXFileReference; name = "imageCropPicker.xcodeproj"; path = "../node_modules/react-native-image-crop-picker/ios/imageCropPicker.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		32C2216D3F454152A0E96DDB /* libimageCropPicker.a */ = {isa = PBXFileReference; name = "libimageCropPicker.a"; path = "libimageCropPicker.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		564A591762B241E393D1EECF /* RNCReactNativeCheckbox.xcodeproj */ = {isa = PBXFileReference; name = "RNCReactNativeCheckbox.xcodeproj"; path = "../node_modules/@react-native-community/checkbox/ios/RNCReactNativeCheckbox.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		BA9212DD8E584E74A4E46F31 /* libRNCReactNativeCheckbox.a */ = {isa = PBXFileReference; name = "libRNCReactNativeCheckbox.a"; path = "libRNCReactNativeCheckbox.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -428,6 +431,7 @@
 				B9B575CBF29B4D8891361EF2 /* libRNGoogleSignin.a in Frameworks */,
 				8A9D93B0A99B4B22ADB4CB00 /* libRNVectorIcons.a in Frameworks */,
 				B36C8E11389B46CEA43D3096 /* libimageCropPicker.a in Frameworks */,
+				31588319DE99466CBCE4E4A5 /* libRNCReactNativeCheckbox.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -624,6 +628,7 @@
 				6907BA7E9F3D434C83EADD92 /* RNGoogleSignin.xcodeproj */,
 				900A74A3CA5B440EA0665E59 /* RNVectorIcons.xcodeproj */,
 				6F6AD6E871764BD58E32458F /* imageCropPicker.xcodeproj */,
+				564A591762B241E393D1EECF /* RNCReactNativeCheckbox.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1290,6 +1295,7 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/griyamua.app/griyamua";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1298,6 +1304,7 @@
 					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/@react-native-community/checkbox/ios",
 				);
 			};
 			name = Debug;
@@ -1319,6 +1326,7 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/griyamua.app/griyamua";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1327,6 +1335,7 @@
 					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/@react-native-community/checkbox/ios",
 				);
 			};
 			name = Release;
@@ -1354,6 +1363,7 @@
 					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/@react-native-community/checkbox/ios",
 				);
 			};
 			name = Debug;
@@ -1380,6 +1390,7 @@
 					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/@react-native-community/checkbox/ios",
 				);
 			};
 			name = Release;
@@ -1409,6 +1420,7 @@
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1417,6 +1429,7 @@
 					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/@react-native-community/checkbox/ios",
 				);
 			};
 			name = Debug;
@@ -1446,6 +1459,7 @@
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1454,6 +1468,7 @@
 					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/@react-native-community/checkbox/ios",
 				);
 			};
 			name = Release;
@@ -1482,6 +1497,7 @@
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1490,6 +1506,7 @@
 					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/@react-native-community/checkbox/ios",
 				);
 			};
 			name = Debug;
@@ -1518,6 +1535,7 @@
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1526,6 +1544,7 @@
 					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/@react-native-community/checkbox/ios",
 				);
 			};
 			name = Release;

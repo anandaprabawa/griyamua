@@ -6,6 +6,7 @@ import {
   StatusBar,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   Text,
   Dimensions,
   ScrollView,
@@ -15,7 +16,6 @@ import { GoogleSignin } from 'react-native-google-signin';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import griyamuaImage from '../assets/griyamua-white.png';
-import googelIcon from '../assets/google-icon.png';
 import Loading from '../components/loading.componnet';
 
 const validationSchema = Yup.object().shape({
@@ -88,6 +88,10 @@ class LoginScreen extends React.Component {
     }
   };
 
+  handlePressLupaPassword = async () => {
+    this.props.navigation.navigate('LupaPassword');
+  };
+
   render() {
     const { isLoading } = this.state;
 
@@ -156,6 +160,15 @@ class LoginScreen extends React.Component {
                     {errors.password && touched.password && (
                       <Text style={styles.errorField}>{errors.password}</Text>
                     )}
+                    <View style={styles.lupaPasswordView}>
+                      <TouchableWithoutFeedback
+                        onPress={this.handlePressLupaPassword}
+                      >
+                        <Text style={styles.lupaPasswordText}>
+                          Lupa password
+                        </Text>
+                      </TouchableWithoutFeedback>
+                    </View>
                     <TouchableOpacity
                       disabled={!isValid}
                       onPress={handleSubmit}
@@ -219,7 +232,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 32,
+    marginTop: 16,
     fontWeight: '700',
   },
   buttonText: {
@@ -243,6 +256,16 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginBottom: 8,
     paddingHorizontal: 16,
+  },
+  lupaPasswordView: {
+    textAlign: 'center',
+    display: 'flex',
+    alignItems: 'center',
+    marginTop: 24,
+  },
+  lupaPasswordText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
 

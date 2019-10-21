@@ -60,11 +60,13 @@ class DaftarPelanggan extends React.Component {
           email,
           isMua: false,
           uid: res.user.uid,
+          namaLengkap,
+          alamatLengkap,
+          telepon,
           tanggalLahir,
           jenisKelamin,
         });
 
-      this.setState({ isLoading: false });
       this.props.navigation.navigate('Main');
     }
   };

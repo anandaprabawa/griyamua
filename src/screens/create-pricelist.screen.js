@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Formik } from 'formik';
-import firebase from 'react-native-firebase';
+// import firebase from 'react-native-firebase';
 import { theme } from '../theme';
 
 class CreatePricelistScreen extends React.Component {
@@ -18,14 +18,14 @@ class CreatePricelistScreen extends React.Component {
   };
 
   handleSubmit = async (values, actions) => {
-    const user = firebase.auth().currentUser;
-    await firebase
-      .firestore()
-      .collection('users')
-      .doc(user.uid)
-      .collection('daftar-harga')
-      .add(values);
-    actions.setSubmitting(false);
+    // const user = firebase.auth().currentUser;
+    // await firebase
+    //   .firestore()
+    //   .collection('users')
+    //   .doc(user.uid)
+    //   .collection('daftar-harga')
+    //   .add(values);
+    // actions.setSubmitting(false);
     this.props.navigation.goBack();
   };
 
@@ -83,34 +83,6 @@ class CreatePricelistScreen extends React.Component {
                   </View>
                 </View>
                 <View style={styles.formInputWrapper}>
-                  <Text style={styles.label}>Layanan</Text>
-                  <TextInput
-                    style={[
-                      styles.formInputMargin,
-                      styles.formInputPadding,
-                      styles.inputBorder,
-                    ]}
-                    placeholder="contoh: Hairdo & Makeup"
-                    value={values.layanan}
-                    onChangeText={handleChange('layanan')}
-                    onBlur={handleBlur('layanan')}
-                  />
-                </View>
-                <View style={styles.formInputWrapper}>
-                  <Text style={styles.label}>Harga</Text>
-                  <TextInput
-                    style={[
-                      styles.formInputMargin,
-                      styles.formInputPadding,
-                      styles.inputBorder,
-                    ]}
-                    placeholder="contoh: 100000"
-                    value={values.harga}
-                    onChangeText={handleChange('harga')}
-                    onBlur={handleBlur('harga')}
-                  />
-                </View>
-                <View style={styles.formInputWrapper}>
                   <Text style={styles.label}>Lama Pengerjaan</Text>
                   <View
                     style={[
@@ -130,6 +102,34 @@ class CreatePricelistScreen extends React.Component {
                       <Text style={styles.inputMenitText}>menit</Text>
                     </View>
                   </View>
+                </View>
+                <View style={styles.formInputWrapper}>
+                  <Text style={styles.label}>Harga</Text>
+                  <TextInput
+                    style={[
+                      styles.formInputMargin,
+                      styles.formInputPadding,
+                      styles.inputBorder,
+                    ]}
+                    placeholder="contoh: 100000"
+                    value={values.harga}
+                    onChangeText={handleChange('harga')}
+                    onBlur={handleBlur('harga')}
+                  />
+                </View>
+                <View style={styles.formInputWrapper}>
+                  <Text style={styles.label}>Penjelasan (optional)</Text>
+                  <TextInput
+                    style={[
+                      styles.formInputMargin,
+                      styles.formInputPadding,
+                      styles.inputBorder,
+                    ]}
+                    placeholder="contoh: Hairdo & Makeup"
+                    value={values.layanan}
+                    onChangeText={handleChange('layanan')}
+                    onBlur={handleBlur('layanan')}
+                  />
                 </View>
               </View>
             </ScrollView>

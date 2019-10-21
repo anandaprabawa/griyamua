@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Rating } from 'react-native-ratings';
 // import { Rating } from 'react-native-ratings';
 import ImagePicker from 'react-native-image-crop-picker';
 // import firebase from 'react-native-firebase';
@@ -99,7 +100,7 @@ class AccountScreen extends React.Component {
             <View style={styles.profileImageWrapper}>
               <Image source={image} style={styles.profileImage} />
               {/* {isMe && ( */}
-              <Icon name="camera" size={24} style={styles.profileCameraIcon} />
+              {/* <Icon name="camera" size={24} style={styles.profileCameraIcon} /> */}
               {/* )} */}
             </View>
           </TouchableWithoutFeedback>
@@ -122,11 +123,22 @@ class AccountScreen extends React.Component {
               <Text style={styles.profileInfoRatingText}>(150)</Text>
             </View> */}
             {/* {isMe && ( */}
+            <Rating
+              imageSize={16}
+              startingValue={5}
+              readonly
+              style={{
+                alignItems: 'center',
+                flexDirection: 'row',
+                marginTop: -16,
+                paddingVertical: 12,
+              }}
+            />
             <TouchableOpacity
-              onPress={() => this.props.navigation.push('EditProfile')}
+              onPress={() => this.props.navigation.push('BeriUlasan')}
             >
               <View style={styles.btnEditProfile}>
-                <Text style={styles.btnEditText}>Edit Profile</Text>
+                <Text style={styles.btnEditText}>Beri Ulasan</Text>
               </View>
             </TouchableOpacity>
             {/* )} */}
@@ -163,11 +175,24 @@ class AccountScreen extends React.Component {
             <Text style={styles.descContent}>{user.deskripsi}</Text>
           </View>
         )} */}
+        <View style={styles.categoryWrapper}>
+          <Text style={styles.categoryTitle}>Jenis Makeup</Text>
+          <Text style={styles.categoryListText}>
+            Bold, Flawless, Payas Agung, Graduation, Natural, Body Painting,
+            Face Painting, Pre-wedding/Wedding,
+          </Text>
+        </View>
+        <View style={styles.categoryWrapper}>
+          <Text style={styles.categoryTitle}>Jenis Produk</Text>
+          <Text style={styles.categoryListText}>
+            Benefit, Nars, MAC, Borjuis, YSL, Anastasia Berverly Hills,
+          </Text>
+        </View>
         {/* {user.alamat && ( */}
-        <View style={styles.descWrapper}>
+        {/* <View style={styles.descWrapper}>
           <Text style={styles.descTitle}>Alamat</Text>
           <Text style={styles.descContent}>Jalan tukad badung</Text>
-        </View>
+        </View> */}
         {/* )} */}
         {/* {(user.wa || user.ig) && ( */}
         <View style={styles.contactWrapper}>

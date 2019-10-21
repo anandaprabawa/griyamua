@@ -9,8 +9,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import DatePicker from 'react-native-datepicker';
 import { theme } from '../theme';
-import firebase from 'react-native-firebase';
+// import firebase from 'react-native-firebase';
 
 export const highEndProduct = [
   'Benefit',
@@ -55,23 +56,23 @@ export const drugStoreProduct = [
 
 class SearchScreen extends React.Component {
   static navigationOptions = {
-    headerTitle: 'Search',
+    headerTitle: 'Pencarian',
   };
 
   handleSearch = async () => {
-    const mua = [];
-    const getMua = await firebase
-      .firestore()
-      .collection('users')
-      .where('isMua', '==', true)
-      .get();
-    getMua.forEach(snapshot => {
-      const data = snapshot.data();
-      if (data.uid !== firebase.auth().currentUser.uid) {
-        mua.push(snapshot.data());
-      }
-    });
-    this.props.navigation.push('SearchResult', { mua });
+    // const mua = [];
+    // const getMua = await firebase
+    //   .firestore()
+    //   .collection('users')
+    //   .where('isMua', '==', true)
+    //   .get();
+    // getMua.forEach(snapshot => {
+    //   const data = snapshot.data();
+    //   if (data.uid !== firebase.auth().currentUser.uid) {
+    //     mua.push(snapshot.data());
+    //   }
+    // });
+    this.props.navigation.push('SearchResult');
   };
 
   render() {
@@ -100,7 +101,38 @@ class SearchScreen extends React.Component {
             <Picker.Item label="Drugstore" value="Drug Store" />
           </Picker>
         </View>
-        <Text style={styles.label}>Sort by price</Text>
+        <Text style={styles.label}>Cari Berdasarkan Tanggal</Text>
+        <DatePicker
+          style={{
+            width: '100%',
+            height: 48,
+            marginBottom: 8,
+          }}
+          date={new Date()}
+          mode="date"
+          placeholder="Pilih tanggal"
+          format="YYYY-MM-DD"
+          confirmBtnText="Ok"
+          cancelBtnText="Batal"
+          customStyles={{
+            dateIcon: {
+              position: 'absolute',
+              right: 0,
+              top: 8,
+              marginLeft: 0,
+            },
+            dateInput: {
+              borderRadius: 4,
+              height: 48,
+              width: '100%',
+              top: 0,
+              position: 'absolute',
+              borderColor: '#ddd',
+            },
+          }}
+          // onDateChange={this.handleChangeText('tanggalLahir')}
+        />
+        <Text style={styles.label}>Urut berdasarkan harga</Text>
         <View>
           <TextInput
             placeholder="Min"
@@ -115,7 +147,7 @@ class SearchScreen extends React.Component {
         </View>
         <TouchableOpacity onPress={this.handleSearch}>
           <View style={styles.searchButton}>
-            <Text style={styles.searchButtonText}>Search</Text>
+            <Text style={styles.searchButtonText}>Cari</Text>
           </View>
         </TouchableOpacity>
       </ScrollView>

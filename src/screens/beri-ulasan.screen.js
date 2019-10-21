@@ -7,12 +7,13 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
+import { Rating } from 'react-native-ratings';
 import { theme } from '../theme';
-import firebase from 'react-native-firebase';
+// import firebase from 'react-native-firebase';
 
 class BeriUlasanScreen extends React.Component {
   static navigationOptions = {
-    title: 'Ulas',
+    title: 'Nilai MUA Pilihanmu',
   };
 
   state = {
@@ -24,20 +25,20 @@ class BeriUlasanScreen extends React.Component {
   };
 
   handleUlas = async () => {
-    const selectedUser = this.props.navigation.getParam('user');
-    const authUser = firebase.auth().currentUser;
-    const getUser = await firebase
-      .firestore()
-      .collection('users')
-      .doc(authUser.uid)
-      .get();
-    const currUser = getUser.data();
-    await firebase
-      .firestore()
-      .collection('users')
-      .doc(selectedUser.uid)
-      .collection('ulasan')
-      .add({ ulasan: this.state.ulasan, namaPengulas: currUser.name });
+    // const selectedUser = this.props.navigation.getParam('user');
+    // const authUser = firebase.auth().currentUser;
+    // const getUser = await firebase
+    //   .firestore()
+    //   .collection('users')
+    //   .doc(authUser.uid)
+    //   .get();
+    // const currUser = getUser.data();
+    // await firebase
+    //   .firestore()
+    //   .collection('users')
+    //   .doc(selectedUser.uid)
+    //   .collection('ulasan')
+    //   .add({ ulasan: this.state.ulasan, namaPengulas: currUser.name });
     this.props.navigation.goBack();
   };
 
@@ -45,9 +46,31 @@ class BeriUlasanScreen extends React.Component {
     return (
       <ScrollView>
         <View style={styles.root}>
-          <TextInput
+          {/* <TextInput
             multiline
             placeholder="Ulasan..."
+            style={styles.input}
+            textAlignVertical="top"
+            numberOfLines={5}
+            onChangeText={this.handleChangeUlasan}
+          /> */}
+          <Text style={{ fontSize: 16, textAlign: 'center' }}>
+            Beri nilai untuk MUA dan Makeup kamu
+          </Text>
+          <Rating
+            imageSize={32}
+            startingValue={0}
+            readonly
+            style={{
+              alignItems: 'center',
+              flexDirection: 'row',
+              paddingVertical: 12,
+              justifyContent: 'center',
+            }}
+          />
+          <TextInput
+            multiline
+            placeholder="Tulis komentar kamu untuk MUA dan hasil makeup-nya"
             style={styles.input}
             textAlignVertical="top"
             numberOfLines={5}
@@ -56,7 +79,7 @@ class BeriUlasanScreen extends React.Component {
           <TouchableOpacity onPress={this.handleUlas}>
             <View style={styles.btn}>
               <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 16 }}>
-                Simpan
+                Kirim
               </Text>
             </View>
           </TouchableOpacity>

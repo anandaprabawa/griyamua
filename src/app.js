@@ -15,11 +15,15 @@ import HomeScreen from './screens/home.screen';
 import SearchScreen from './screens/search.screen';
 import BookingScreen from './screens/booking.screen';
 import AccountScreen from './screens/account.screen';
-import PricelistScreen from './screens/pricelist.screen';
-import GalleryScreen from './screens/gallery.screen';
+import AccountScreenResult from './screens/account-result.screen';
+// import PricelistScreen from './screens/pricelist.screen';
+import PricelistScreenResult from './screens/pricelist-result.screen';
+// import GalleryScreen from './screens/gallery.screen';
+import GalleryScreenResult from './screens/gallery-result.screen';
 import CreatePricelistScreen from './screens/create-pricelist.screen';
-import ReviewScreen from './screens/review.screen';
-import ScheduleScreen from './screens/schedule.screen';
+import ReviewScreenResult from './screens/review-result.screen';
+// import ScheduleScreen from './screens/schedule.screen';
+import ScheduleScreenResult from './screens/schedule-result.screen';
 import DetailScreen from './screens/detail-booking.screen';
 import { theme } from './theme';
 import EditProfileScreen from './screens/edit-profile.screen';
@@ -36,6 +40,7 @@ import DaftarPelanggan2 from './screens/daftar-pelanggan2.screen';
 import DaftarMUA from './screens/daftar-mua.screen';
 import DaftarMUA2 from './screens/daftar-mua2.screen';
 import DaftarMUA3 from './screens/daftar-mua3.screen';
+import RescheduleScreen from './screens/reschedule.screen';
 
 const AuthNavigator = createStackNavigator({
   ChooseAuth: ChooseAuthScreen,
@@ -57,15 +62,15 @@ const HomeStack = createStackNavigator({
 
 const SearchAccountTabs = createMaterialTopTabNavigator(
   {
-    ResultProfile: AccountScreen,
-    ResultSchedule: ScheduleScreen,
-    ResultPricelist: PricelistScreen,
-    ResultGallery: GalleryScreen,
-    ResultReview: ReviewScreen,
+    ResultProfile: AccountScreenResult,
+    ResultSchedule: ScheduleScreenResult,
+    ResultPricelist: PricelistScreenResult,
+    ResultGallery: GalleryScreenResult,
+    ResultReview: ReviewScreenResult,
   },
   {
     navigationOptions: ({ navigation }) => ({
-      headerTitle: 'Akun MUA',
+      headerTitle: 'MUA',
     }),
     lazy: true,
     tabBarOptions: {
@@ -94,6 +99,7 @@ const SearchStack = createStackNavigator({
 const BookingStack = createStackNavigator({
   IndexBooking: BookingScreen,
   DetailBooking: DetailScreen,
+  Reschedule: RescheduleScreen,
 });
 
 const AccountTabs = createMaterialTopTabNavigator(

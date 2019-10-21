@@ -10,9 +10,9 @@ import {
   Dimensions,
 } from 'react-native';
 import firebase from 'react-native-firebase';
-import { GoogleSignin } from 'react-native-google-signin';
 import Swiper from 'react-native-swiper-flatlist';
 import Logo from '../components/navbar/logo.component';
+import { theme } from '../theme';
 
 import image1 from '../assets/swiper/slider-1.png';
 import image2 from '../assets/swiper/slider-2.jpg';
@@ -28,35 +28,36 @@ class HomeScreen extends React.Component {
     headerTitle: <Logo />,
   };
 
+  state = {
+    user: null,
+  };
+
+  async componentDidMount() {
+    const loggedUser = firebase.auth().currentUser;
+    const user = await firebase
+      .firestore()
+      .collection('users')
+      .doc(loggedUser.uid)
+      .get();
+    this.setState({ user: user.data() });
+  }
+
   render() {
+    const { user } = this.state;
+
     return (
       <React.Fragment>
         <StatusBar barStyle="dark-content" backgroundColor="transparent" />
         <ScrollView>
-          <View style={styles.swiper}>
-            <Swiper autoplay autoplayDelay={3} autoplayLoop showPagination>
-              <View style={styles.imageSwiperWrapper}>
-                <Image
-                  source={image1}
-                  resizeMode="cover"
-                  style={styles.imageSwiper}
-                />
-              </View>
-              <View style={styles.imageSwiperWrapper}>
-                <Image
-                  source={image2}
-                  resizeMode="cover"
-                  style={styles.imageSwiper}
-                />
-              </View>
-              <View style={styles.imageSwiperWrapper}>
-                <Image
-                  source={image3}
-                  resizeMode="cover"
-                  style={styles.imageSwiper}
-                />
-              </View>
-            </Swiper>
+          <View style={styles.accountWrapper}>
+            <Image
+              source={user ? user.photo || image1 : image1}
+              resizeMode="cover"
+              style={styles.accountImage}
+            />
+            <Text style={styles.accountName}>
+              {user ? user.namaLengkap : null}
+            </Text>
           </View>
 
           <View style={styles.categoryWrapper}>
@@ -108,7 +109,7 @@ class HomeScreen extends React.Component {
                 />
                 <View style={styles.categoryOverlay} />
                 <View style={styles.categoryTextWrapper}>
-                  <Text style={styles.categoryText}>Payas Agung</Text>
+                  <Text style={styles.categoryText}>Traditional Makeup</Text>
                 </View>
               </TouchableOpacity>
             </View>
@@ -124,9 +125,25 @@ class HomeScreen extends React.Component {
 const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
-  swiper: {
+  accountWrapper: {
     width,
-    height: width / 2,
+    height: 150,
+    backgroundColor: theme.colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  accountImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 80,
+    borderColor: '#fff',
+    borderWidth: 2,
+  },
+  accountName: {
+    color: '#fff',
+    fontSize: 16,
+    marginTop: 8,
+    fontWeight: 'bold',
   },
   imageSwiper: {
     width,
@@ -138,7 +155,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     paddingHorizontal: 8,
-    paddingVertical: 24,
+    paddingTop: 16,
   },
   category: {
     width: width / 2 - 24,

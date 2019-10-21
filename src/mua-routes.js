@@ -5,18 +5,18 @@ import {
   createMaterialTopTabNavigator,
 } from 'react-navigation';
 import { bottomBarConfig } from './bottom-bar-config';
-import HomeScreen from './screens/home.screen';
+import HomeScreen from './screens/home-mua.screen';
 import SearchScreen from './screens/search.screen';
-import BookingScreen from './screens/booking.screen';
-import AccountScreen from './screens/account.screen';
-import PricelistScreen from './screens/pricelist.screen';
-import GalleryScreen from './screens/gallery.screen';
+import BookingScreen from './screens/booking-mua.screen';
+import AccountScreen from './screens/account-mua.screen';
+import PricelistScreen from './screens/pricelist-mua.screen';
+import GalleryScreen from './screens/gallery-mua.screen';
 import CreatePricelistScreen from './screens/create-pricelist.screen';
-import ReviewScreen from './screens/review.screen';
-import ScheduleScreen from './screens/schedule.screen';
+import ReviewScreen from './screens/review-mua.screen';
+import ScheduleScreen from './screens/schedule-mua.screen';
 import DetailScreen from './screens/detail-booking.screen';
 import { theme } from './theme';
-import EditProfileScreen from './screens/edit-profile.screen';
+import EditProfileScreen from './screens/edit-profile-mua.screen';
 import Logout from './components/logout.component';
 import SearchResultScreen from './screens/search-result.screen';
 
@@ -73,7 +73,7 @@ const AccountTabs = createMaterialTopTabNavigator(
   },
   {
     navigationOptions: ({ navigation }) => ({
-      headerTitle: 'Akun Saya',
+      headerTitle: 'Akun MUA',
       headerRight: <Logout navigation={navigation} />,
     }),
     lazy: true,
@@ -101,7 +101,7 @@ const AccountStack = createStackNavigator({
 const MainNavigator = createBottomTabNavigator(
   {
     Home: HomeStack,
-    Search: SearchStack,
+    // Search: SearchStack,
     Booking: BookingStack,
     Account: AccountStack,
   },

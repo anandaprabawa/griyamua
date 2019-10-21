@@ -14,7 +14,7 @@ import { theme } from '../theme';
 
 class PesanScreen extends React.Component {
   static navigationOptions = {
-    title: 'Pesanan',
+    title: 'Pesananmu',
   };
 
   // state = {
@@ -50,7 +50,7 @@ class PesanScreen extends React.Component {
     //   .firestore()
     //   .collection('pesanan')
     //   .add(this.state);
-    this.props.navigation.navigate('DetailBooking');
+    this.props.navigation.goBack();
   };
 
   render() {
@@ -263,7 +263,9 @@ class PesanScreen extends React.Component {
                   marginTop: 24,
                 }}
               >
-                <Text style={{ color: '#fff', fontWeight: 'bold' }}>Pesan</Text>
+                <Text style={{ color: '#fff', fontWeight: 'bold' }}>
+                  Update
+                </Text>
               </View>
             </TouchableOpacity>
           </View>

@@ -11,7 +11,7 @@ import { CheckBox } from 'react-native-elements';
 import firebase from 'react-native-firebase';
 import { theme } from '../theme';
 
-const jMakeup = [
+export const jMakeup = [
   'Bold',
   'Flawless',
   'Payas Agung',
@@ -22,7 +22,7 @@ const jMakeup = [
   'Pre-wedding/Wedding',
 ];
 
-const pMakeup = [
+export const pMakeup = [
   'Benefit',
   'Nars',
   'MAC',

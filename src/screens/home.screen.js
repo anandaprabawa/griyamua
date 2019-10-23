@@ -62,7 +62,9 @@ class HomeScreen extends React.Component {
 
           <View style={styles.categoryWrapper}>
             <View style={styles.category}>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate('SearchResult')}
+              >
                 <Image
                   source={beautyClassImage}
                   resizeMode="cover"
@@ -75,7 +77,9 @@ class HomeScreen extends React.Component {
               </TouchableOpacity>
             </View>
             <View style={styles.category}>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate('SearchResult')}
+              >
                 <Image
                   source={weddingImage}
                   resizeMode="cover"
@@ -88,7 +92,9 @@ class HomeScreen extends React.Component {
               </TouchableOpacity>
             </View>
             <View style={styles.category}>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate('SearchResult')}
+              >
                 <Image
                   source={graduationImage}
                   resizeMode="cover"
@@ -101,7 +107,9 @@ class HomeScreen extends React.Component {
               </TouchableOpacity>
             </View>
             <View style={styles.category}>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate('SearchResult')}
+              >
                 <Image
                   source={payasAgung}
                   resizeMode="cover"

@@ -107,11 +107,11 @@ class AccountScreen extends React.Component {
           <View style={styles.profileInfoWrapper}>
             <Text style={styles.profileInfoName}>
               {/* {user && user.name ? user.name : user.email} */}
-              Ratih Ardyantari
+              Eldy Pramana
             </Text>
             <Text style={styles.profileInfoUsername}>
               {/* {user && user.username} */}
-              ratihardyantarii
+              eldypramana
             </Text>
             {/* <View style={styles.profileInfoRatingWrapper}>
               <Rating
@@ -229,7 +229,7 @@ class AccountScreen extends React.Component {
           >
             <View style={styles.contactListWrapper}>
               <Icon name="instagram" size={24} color="#fff" />
-              <Text style={styles.contactListText}>ratihardyantarii</Text>
+              <Text style={styles.contactListText}>eldypramana</Text>
             </View>
           </TouchableWithoutFeedback>
           {/* )} */}

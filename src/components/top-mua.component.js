@@ -7,7 +7,7 @@ const MuaCard = () => (
   <View style={styles.muaCardRoot}>
     <Image source={image} style={styles.muaCardImage} resizeMode="cover" />
     <View>
-      <Text style={styles.muaCardName}>Ida Ayu Ratih</Text>
+      <Text style={styles.muaCardName}>Eldy Pramana</Text>
       <Text style={styles.muaCardLocation}>Bali</Text>
       <Rating
         startingValue={5}

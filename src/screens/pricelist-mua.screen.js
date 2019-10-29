@@ -1,17 +1,25 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  FlatList,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-// import firebase from 'react-native-firebase';
+import firebase from 'react-native-firebase';
 import { theme } from '../theme';
 
-const Card = () => (
+const Card = ({ item }) => (
   <View style={styles.cardRoot}>
     <View style={styles.cardLeft}>
-      <Text style={styles.cardTitle}>Makeup Luar Biasa</Text>
-      <Text style={styles.cardDesc}>Deskripsi makeup</Text>
+      <Text style={styles.cardTitle}>{item.nama}</Text>
+      <Text style={styles.cardDesc}>{item.layanan}</Text>
       <View style={styles.cardDetail}>
         <Icon name="clock-outline" size={20} style={styles.cardIcon} />
-        <Text style={[styles.cardText, styles.cardHour]}>5 Menit</Text>
+        <Text style={[styles.cardText, styles.cardHour]}>
+          {`${item.lamaPengerjaan} Menit`}
+        </Text>
       </View>
       <View style={styles.cardDetail}>
         <Icon
@@ -20,7 +28,9 @@ const Card = () => (
           style={styles.cardIcon}
           color={theme.colors.primary}
         />
-        <Text style={[styles.cardPrice, styles.cardText]}>Rp 400.000</Text>
+        <Text style={[styles.cardPrice, styles.cardText]}>
+          {`Rp ${item.harga}`}
+        </Text>
       </View>
     </View>
   </View>
@@ -31,44 +41,26 @@ class PricelistScreen extends React.Component {
     title: 'Daftar Harga',
   };
 
-  // state = {
-  //   data: [],
-  //   isMe: false,
-  //   user: null,
-  // };
+  state = {
+    data: null,
+  };
 
-  // componentDidMount() {
-  //   const loginUser = firebase.auth().currentUser;
-  //   // if (user.uid) {
-  //   //   firebase
-  //   //     .firestore()
-  //   //     .collection('users')
-  //   //     .doc(user.uid)
-  //   //     .get()
-  //   //     .then(doc => {
-  //   //       this.setState({ user: doc.data() });
-  //   //     });
-  //   // }
-  //   firebase
-  //     .firestore()
-  //     .collection('users')
-  //     .doc(user ? user.uid : loginUser.uid)
-  //     .collection('daftar-harga')
-  //     .onSnapshot(snapshot => {
-  //       const tempData = [];
-  //       snapshot.forEach(snap => {
-  //         tempData.push(snap.data());
-  //       });
-  //       this.setState({ data: tempData });
-  //     });
-  //   if ((user && user.uid === loginUser.uid) || !user) {
-  //     this.setState({ isMe: true });
-  //   } else {
-  //     this.setState({ isMe: false, user });
-  //   }
-  // }
+  componentDidMount() {
+    const loginUser = firebase.auth().currentUser;
+    firebase
+      .firestore()
+      .collection('daftar-harga')
+      .where('ownerId', '==', loginUser.uid)
+      .onSnapshot(snapshot => {
+        const tempData = [];
+        snapshot.forEach(snap => {
+          tempData.push(snap.data());
+        });
+        this.setState({ data: tempData });
+      });
+  }
 
-  // keyExtractor = (item, index) => `pricelist-${index}`;
+  keyExtractor = (item, index) => `pricelist-${index}`;
 
   navigateToCreate = () => {
     const { navigation } = this.props;
@@ -76,37 +68,25 @@ class PricelistScreen extends React.Component {
   };
 
   render() {
+    const { data } = this.state;
+    const { navigation } = this.props;
+
     return (
       <View style={{ position: 'relative', height: '100%' }}>
-        {/* <FlatList
-          data={this.state.data}
+        <FlatList
+          data={data}
           keyExtractor={this.keyExtractor}
-          renderItem={Card(this.state, this.props.navigation)}
+          renderItem={({ item }) => (
+            <Card item={item} navigation={navigation} />
+          )}
           contentContainerStyle={styles.scroll}
         />
-        {this.state.isMe && ( */}
-        <Card />
-        <Card />
-        <Card />
         <TouchableOpacity
           style={styles.addButton}
           onPress={this.navigateToCreate}
         >
-          {/* <Icon
-            name="plus"
-            size={24}
-            color="#fff"
-            style={{
-              position: 'absolute',
-              bottom: 16,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          /> */}
           <Text style={styles.btnText}>Tambah Daftar Harga</Text>
         </TouchableOpacity>
-        {/* )} */}
       </View>
     );
   }

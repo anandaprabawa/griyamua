@@ -13,7 +13,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 // import { Rating } from 'react-native-ratings';
 import ImagePicker from 'react-native-image-crop-picker';
 import firebase from 'react-native-firebase';
-import image from '../assets/graduation.jpeg';
+import image from '../assets/account-circle.png';
 import { theme } from '../theme';
 
 class AccountScreen extends React.Component {
@@ -22,18 +22,7 @@ class AccountScreen extends React.Component {
   };
 
   state = {
-    user: {
-      uid: null,
-      avatar: null,
-      name: null,
-      jenisMakeup: [],
-      produkMakeup: [],
-      deskripsi: null,
-      alamat: null,
-      wa: null,
-      ig: null,
-    },
-    isMe: false,
+    user: null,
   };
 
   componentDidMount() {
@@ -41,9 +30,10 @@ class AccountScreen extends React.Component {
   }
 
   handleGetUser = () => {
-    const userFromSearch = this.props.navigation.getParam('user');
+    const { navigation } = this.props;
+    const userFromSearch = navigation.getParam('user');
     if (userFromSearch) {
-      this.setState({ user: userFromSearch, isMe: false });
+      this.setState({ user: userFromSearch });
     } else {
       const currUser = firebase.auth().currentUser;
       firebase
@@ -53,44 +43,36 @@ class AccountScreen extends React.Component {
         .onSnapshot(doc => {
           this.setState({
             user: { ...doc.data(), uid: currUser.uid },
-            isMe: true,
           });
         });
     }
   };
 
   handleClickAvatar = () => {
-    if (this.state.isMe) {
-      ImagePicker.openPicker({
-        compressImageMaxWidth: 1024,
-        compressImageMaxHeight: 1024,
-        compressImageQuality: 0.8,
-        mediaType: 'photo',
-        cropping: true,
-      }).then(async image => {
-        const pathParts = image.path.split('/');
-        const ref = firebase
-          .storage()
-          .ref(`/${pathParts[pathParts.length - 1]}`);
-        await ref.putFile(image.path);
-        const downloadedUrl = await ref.getDownloadURL();
-        this.setState(
-          { user: { ...this.state.user, avatar: downloadedUrl } },
-          async () => {
-            await firebase
-              .firestore()
-              .collection('users')
-              .doc(this.state.user.uid)
-              .set(this.state.user);
-          },
-        );
-      });
-    }
+    const { user } = this.state;
+
+    ImagePicker.openPicker({
+      compressImageMaxWidth: 512,
+      compressImageMaxHeight: 512,
+      compressImageQuality: 0.7,
+      mediaType: 'photo',
+      cropping: true,
+      includeBase64: true,
+    }).then(async img => {
+      const dataImg = `data:${img.mime};base64,${img.data}`;
+      await firebase
+        .firestore()
+        .collection('users')
+        .doc(user.uid)
+        .set({ ...user, avatar: dataImg }, { merge: true });
+      this.setState({ user: { ...user, avatar: dataImg } });
+    });
   };
 
   render() {
-    const { user, isMe } = this.state;
-    const avatar = user.avatar ? { uri: user.avatar } : image;
+    const { user } = this.state;
+    const avatar = user && user.avatar ? { uri: user.avatar } : image;
+    const { navigation } = this.props;
 
     return (
       <ScrollView>
@@ -98,51 +80,30 @@ class AccountScreen extends React.Component {
           <TouchableWithoutFeedback onPress={this.handleClickAvatar}>
             <View style={styles.profileImageWrapper}>
               <Image source={avatar} style={styles.profileImage} />
-              {isMe && (
-                <Icon
-                  name="camera"
-                  size={24}
-                  style={styles.profileCameraIcon}
-                />
-              )}
+              <Icon name="camera" size={24} style={styles.profileCameraIcon} />
             </View>
           </TouchableWithoutFeedback>
           <View style={styles.profileInfoWrapper}>
             <Text style={styles.profileInfoName}>
-              {user && user.namaLengkap ? user.namaLengkap : user.email}
+              {user && (user.namaLengkap || user.email || null)}
             </Text>
             <Text style={styles.profileInfoUsername} numberOfLines={1}>
               {user && user.username}
             </Text>
-            {isMe && (
-              <TouchableOpacity
-                onPress={() =>
-                  this.props.navigation.push('EditProfile', {
-                    user,
-                  })
-                }
-              >
-                <View style={styles.btnEditProfile}>
-                  <Text style={styles.btnEditText}>Edit Profile</Text>
-                </View>
-              </TouchableOpacity>
-            )}
-            {!isMe && (
-              <TouchableOpacity
-                onPress={() =>
-                  this.props.navigation.push('BeriUlasan', {
-                    user,
-                  })
-                }
-              >
-                <View style={styles.btnEditProfile}>
-                  <Text style={styles.btnEditText}>Beri Ulasan</Text>
-                </View>
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity
+              onPress={() =>
+                navigation.push('EditProfile', {
+                  user,
+                })
+              }
+            >
+              <View style={styles.btnEditProfile}>
+                <Text style={styles.btnEditText}>Edit Profile</Text>
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
-        {user.jenisMakeup && (
+        {user && user.jenisMakeup && (
           <View style={styles.categoryWrapper}>
             <Text style={styles.categoryTitle}>Jenis Makeup</Text>
             <Text style={styles.categoryListText}>
@@ -150,7 +111,7 @@ class AccountScreen extends React.Component {
             </Text>
           </View>
         )}
-        {user.produkMakeup && (
+        {user && user.produkMakeup && (
           <View style={styles.categoryWrapper}>
             <Text style={styles.categoryTitle}>Jenis Produk</Text>
             <Text style={styles.categoryListText}>
@@ -158,13 +119,29 @@ class AccountScreen extends React.Component {
             </Text>
           </View>
         )}
-        {user.alamatLengkap && (
+        {user && user.alamatLengkap && (
           <View style={styles.descWrapper}>
             <Text style={styles.descTitle}>Alamat</Text>
             <Text style={styles.descContent}>{user.alamatLengkap}</Text>
           </View>
         )}
-        {user.telepon && (
+        {user && user.jenisKelamin !== undefined && (
+          <View style={styles.descWrapper}>
+            <Text style={styles.descTitle}>Jenis Kelamin</Text>
+            <Text style={styles.descContent}>
+              {user.jenisKelamin === 0 ? 'Laki-laki' : 'Perempuan'}
+            </Text>
+          </View>
+        )}
+        {user && user.tanggalLahir && (
+          <View style={styles.descWrapper}>
+            <Text style={styles.descTitle}>Tanggal Lahir</Text>
+            <Text style={styles.descContent}>
+              {new Date(user.tanggalLahir.toDate()).toDateString().slice(4)}
+            </Text>
+          </View>
+        )}
+        {user && (user.telepon || user.wa) && (
           <View style={styles.contactWrapper}>
             <Text style={styles.contactTitle}>Kontak</Text>
             {user.telepon && (
@@ -179,26 +156,18 @@ class AccountScreen extends React.Component {
                 </View>
               </TouchableWithoutFeedback>
             )}
-            <TouchableWithoutFeedback
-              onPress={() => {
-                Linking.openURL(`https://wa.me/082247555156`);
-              }}
-            >
-              <View style={styles.contactListWrapper}>
-                <Icon name="whatsapp" size={24} color="#fff" />
-                <Text style={styles.contactListText}>082247555156</Text>
-              </View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback
-              onPress={() => {
-                Linking.openURL(`https://instagram.com/_u/ratihardyantarii`);
-              }}
-            >
-              <View style={styles.contactListWrapper}>
-                <Icon name="instagram" size={24} color="#fff" />
-                <Text style={styles.contactListText}>ratihardyantarii</Text>
-              </View>
-            </TouchableWithoutFeedback>
+            {user.wa && (
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  Linking.openURL(`https://wa.me/${user.wa}`);
+                }}
+              >
+                <View style={styles.contactListWrapper}>
+                  <Icon name="whatsapp" size={24} color="#fff" />
+                  <Text style={styles.contactListText}>{user.wa}</Text>
+                </View>
+              </TouchableWithoutFeedback>
+            )}
           </View>
         )}
       </ScrollView>
@@ -215,6 +184,7 @@ const styles = StyleSheet.create({
   profileImageWrapper: {
     position: 'relative',
     marginRight: 24,
+    height: 100,
   },
   profileImage: {
     width: 100,
@@ -224,7 +194,7 @@ const styles = StyleSheet.create({
   profileCameraIcon: {
     position: 'absolute',
     right: 4,
-    top: 72,
+    bottom: 0,
     backgroundColor: '#fff',
     padding: 4,
     borderRadius: 100,

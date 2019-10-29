@@ -10,13 +10,10 @@ import {
   Dimensions,
 } from 'react-native';
 import firebase from 'react-native-firebase';
-import Swiper from 'react-native-swiper-flatlist';
 import Logo from '../components/navbar/logo.component';
 import { theme } from '../theme';
 
-import image1 from '../assets/swiper/slider-1.png';
-import image2 from '../assets/swiper/slider-2.jpg';
-import image3 from '../assets/swiper/slider-3.jpg';
+import image1 from '../assets/account-circle.png';
 import beautyClassImage from '../assets/beauty-class.jpeg';
 import graduationImage from '../assets/graduation.jpeg';
 import payasAgung from '../assets/payas-agung.jpeg';
@@ -33,17 +30,18 @@ class HomeScreen extends React.Component {
   };
 
   async componentDidMount() {
-    const loggedUser = firebase.auth().currentUser;
+    const { currentUser } = firebase.auth();
     const user = await firebase
       .firestore()
       .collection('users')
-      .doc(loggedUser.uid)
+      .doc(currentUser.uid)
       .get();
     this.setState({ user: user.data() });
   }
 
   render() {
     const { user } = this.state;
+    const { navigation } = this.props;
 
     return (
       <React.Fragment>
@@ -51,19 +49,19 @@ class HomeScreen extends React.Component {
         <ScrollView>
           <View style={styles.accountWrapper}>
             <Image
-              source={user ? user.photo || image1 : image1}
+              source={user && user.avatar ? { uri: user.avatar } : image1}
               resizeMode="cover"
               style={styles.accountImage}
             />
             <Text style={styles.accountName}>
-              {user ? user.namaLengkap : null}
+              {user && (user.namaLengkap || user.email || null)}
             </Text>
           </View>
 
           <View style={styles.categoryWrapper}>
             <View style={styles.category}>
               <TouchableOpacity
-                onPress={() => this.props.navigation.navigate('SearchResult')}
+                onPress={() => navigation.navigate('SearchResult')}
               >
                 <Image
                   source={beautyClassImage}
@@ -78,7 +76,7 @@ class HomeScreen extends React.Component {
             </View>
             <View style={styles.category}>
               <TouchableOpacity
-                onPress={() => this.props.navigation.navigate('SearchResult')}
+                onPress={() => navigation.navigate('SearchResult')}
               >
                 <Image
                   source={weddingImage}
@@ -93,7 +91,7 @@ class HomeScreen extends React.Component {
             </View>
             <View style={styles.category}>
               <TouchableOpacity
-                onPress={() => this.props.navigation.navigate('SearchResult')}
+                onPress={() => navigation.navigate('SearchResult')}
               >
                 <Image
                   source={graduationImage}
@@ -108,7 +106,7 @@ class HomeScreen extends React.Component {
             </View>
             <View style={styles.category}>
               <TouchableOpacity
-                onPress={() => this.props.navigation.navigate('SearchResult')}
+                onPress={() => navigation.navigate('SearchResult')}
               >
                 <Image
                   source={payasAgung}

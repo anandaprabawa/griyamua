@@ -10,9 +10,8 @@ import {
 import ImageView from 'react-native-image-view';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ImagePicker from 'react-native-image-crop-picker';
+import firebase from 'react-native-firebase';
 import { theme } from '../theme';
-// import firebase from 'react-native-firebase';
-import image1 from '../assets/beauty-class.jpeg';
 
 const { width } = Dimensions.get('window');
 
@@ -21,43 +20,40 @@ class GalleryScreen extends React.Component {
     title: 'Galeri',
   };
 
-  // state = {
-  //   imageIndex: 0,
-  //   isImageViewVisible: false,
-  //   images: [],
-  //   isMe: false,
-  // };
+  state = {
+    imageIndex: 0,
+    isImageViewVisible: false,
+    images: [],
+  };
 
-  // async componentDidMount() {
-  //   const user = this.props.navigation.getParam('user');
-  //   const loginUser = firebase.auth().currentUser;
-  //   firebase
-  //     .firestore()
-  //     .collection('users')
-  //     .doc(user ? user.uid : loginUser.uid)
-  //     .collection('gallery')
-  //     .onSnapshot(snapshot => {
-  //       let tempData = [];
-  //       snapshot.forEach(snap => {
-  //         tempData.push({ image: snap.data().image, width, height: width });
-  //       });
-  //       this.setState({ images: tempData });
-  //     });
-  //   if ((user && loginUser.uid === user.uid) || !user) {
-  //     this.setState({ isMe: true });
-  //   } else {
-  //     this.setState({ isMe: false });
-  //   }
-  // }
+  async componentDidMount() {
+    const loginUser = firebase.auth().currentUser;
+    firebase
+      .firestore()
+      .collection('users')
+      .doc(loginUser.uid)
+      .collection('gallery')
+      .onSnapshot(snapshot => {
+        const tempData = [];
+        snapshot.forEach(snap => {
+          tempData.push({
+            source: { uri: snap.data().image },
+            width,
+            height: width,
+          });
+        });
+        this.setState({ images: tempData });
+      });
+  }
 
-  // keyExtractor = (item, i) => `gallery-${i}`;
+  keyExtractor = (item, i) => `gallery-${i}`;
 
-  // handleClickImage = index => () => {
-  //   this.setState({
-  //     imageIndex: index,
-  //     isImageViewVisible: true,
-  //   });
-  // };
+  handleClickImage = index => () => {
+    this.setState({
+      imageIndex: index,
+      isImageViewVisible: true,
+    });
+  };
 
   handleClickAdd = () => {
     ImagePicker.openPicker({
@@ -67,57 +63,61 @@ class GalleryScreen extends React.Component {
       mediaType: 'photo',
       cropping: true,
     }).then(async image => {
-      // const pathParts = image.path.split('/');
-      // const ref = firebase
-      //   .storage()
-      //   .ref(`/gallery/${pathParts[pathParts.length - 1]}`);
-      // await ref.putFile(image.path);
-      // const downloadedUrl = await ref.getDownloadURL();
-      // await firebase
-      //   .firestore()
-      //   .collection('users')
-      //   .doc(firebase.auth().currentUser.uid)
-      //   .collection('gallery')
-      //   .add({ image: downloadedUrl });
+      const pathParts = image.path.split('/');
+      const ref = firebase
+        .storage()
+        .ref(`/gallery/${pathParts[pathParts.length - 1]}`);
+      await ref.putFile(image.path);
+      const downloadedUrl = await ref.getDownloadURL();
+      await firebase
+        .firestore()
+        .collection('users')
+        .doc(firebase.auth().currentUser.uid)
+        .collection('gallery')
+        .add({ image: downloadedUrl });
     });
   };
 
   renderItem = ({ index, item }) => (
-    <TouchableOpacity>
-      <Image source={item} resizeMode="cover" style={styles.image} />
+    <TouchableOpacity onPress={this.handleClickImage(index)}>
+      <Image
+        source={item.source}
+        resizeMode="cover"
+        width={item.width}
+        height={item.height}
+        style={styles.image}
+      />
     </TouchableOpacity>
   );
 
   render() {
-    // const { imageIndex, isImageViewVisible } = this.state;
+    const { imageIndex, isImageViewVisible, images } = this.state;
 
     return (
       <React.Fragment>
         <ScrollView>
           <FlatList
-            data={[image1, image1, image1]}
+            data={images}
             keyExtractor={this.keyExtractor}
             renderItem={this.renderItem}
             numColumns={2}
             style={styles.flatList}
           />
         </ScrollView>
-        {/* <ImageView
+        <ImageView
           glideAlways
-          images={(image1, image1)}
-          // imageIndex={imageIndex}
+          images={images}
+          imageIndex={imageIndex}
           animationType="fade"
           isVisible={isImageViewVisible}
           onClose={() => this.setState({ isImageViewVisible: false })}
-        /> */}
-        {/* {this.state.isMe && ( */}
+        />
         <TouchableOpacity
           style={styles.addButton}
           onPress={this.handleClickAdd}
         >
           <Icon name="plus" size={32} color="#fff" />
         </TouchableOpacity>
-        {/* )} */}
       </React.Fragment>
     );
   }

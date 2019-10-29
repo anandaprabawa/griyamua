@@ -2,42 +2,47 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import { Rating } from 'react-native-ratings';
 import firebase from 'react-native-firebase';
-import image1 from '../assets/beauty-class.jpeg';
+import noImage from '../assets/account-circle.png';
 
 class ReviewScreen extends React.Component {
   static navigationOptions = {
     title: 'Ulasan',
   };
 
-  state = {
-    data: [],
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: [],
+    };
+  }
 
-  // componentDidMount() {
-  //   const user = this.props.navigation.getParam('user');
-  //   const loginUser = firebase.auth().currentUser;
-  //   const data = [];
-  //   firebase
-  //     .firestore()
-  //     .collection('users')
-  //     .doc(user ? user.uid : loginUser.uid)
-  //     .collection('ulasan')
-  //     .onSnapshot(snapshot => {
-  //       snapshot.forEach(doc => {
-  //         data.push(doc.data());
-  //       });
-  //       this.setState({ data });
-  //     });
-  // }
+  componentDidMount() {
+    const authUser = firebase.auth().currentUser;
+    firebase
+      .firestore()
+      .collection('ulasan')
+      .where('idMua', '==', authUser.uid)
+      .onSnapshot(snapshot => {
+        const data = [];
+        snapshot.forEach(doc => {
+          data.push({ ...doc.data(), uid: doc.id });
+        });
+        this.setState({ data });
+      });
+  }
 
   render() {
+    const { data } = this.state;
+
     return (
       <ScrollView>
-        {[0, 1, 2, 3].map(val => (
-          <View style={styles.cardRoot} key={val}>
+        {data.map(val => (
+          <View style={styles.cardRoot} key={val.uid}>
             <View style={{ flexDirection: 'row' }}>
               <Image
-                source={image1}
+                source={
+                  val.avatarPengulas ? { uri: val.avatarPengulas } : noImage
+                }
                 style={{
                   width: 80,
                   height: 80,
@@ -46,18 +51,16 @@ class ReviewScreen extends React.Component {
                 }}
               />
               <View>
-                <Text style={styles.name}>Nama pengulas</Text>
+                <Text style={styles.name}>{val.namaPengulas}</Text>
                 <View style={styles.ratingWrapper}>
                   <Rating
                     imageSize={16}
-                    startingValue={5}
+                    startingValue={val.rating}
                     readonly
                     style={styles.profileInfoRating}
                   />
                 </View>
-                <Text style={styles.reviewText}>
-                  Lorem ipsum dolor sit amet
-                </Text>
+                <Text style={styles.reviewText}>{val.ulasan}</Text>
               </View>
             </View>
           </View>

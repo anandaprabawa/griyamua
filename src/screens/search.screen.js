@@ -10,95 +10,169 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DatePicker from 'react-native-datepicker';
+import firebase from 'react-native-firebase';
 import { theme } from '../theme';
-// import firebase from 'react-native-firebase';
-
-export const highEndProduct = [
-  'Benefit',
-  'Bobbi Brown',
-  'Anastasia Beverly Hills',
-  'MAC',
-  'Yues Saint Laurent',
-  'Sephora',
-  'Makeup Forever',
-  'Chanel',
-  'Urban Decay',
-  'Becca',
-  'The Body Shop',
-  'Milani',
-  'Bourjois',
-  'Kiehls',
-  'Charlotte Tilbury',
-  'NYC',
-  'Merle Norman',
-  'Max Factor',
-  'Laneige',
-  'Huda Beauty',
-  'Marc Jacob',
-  'Clinique',
-  'Bare Minerals',
-];
-
-export const drugStoreProduct = [
-  'Maybelline',
-  'Make Over',
-  'Loreal',
-  'Wardah',
-  'Wet n Wild',
-  'Focallure',
-  'Viva',
-  'L.A Girl',
-  'Etude House',
-  'Latulip',
-  'By Lizzie Parra',
-  'Emina',
-];
+import { jMakeup, pMakeup } from './daftar-mua3.screen';
 
 class SearchScreen extends React.Component {
   static navigationOptions = {
     headerTitle: 'Pencarian',
   };
 
+  state = {
+    nama: '',
+    jenisMakeup: 'Semua',
+    produkMakeup: 'Semua',
+    tanggal: new Date(),
+    minHarga: '',
+    maxHarga: '',
+  };
+
+  handleInput = field => val => {
+    this.setState({ [field]: val });
+  };
+
+  filterMua = allData => {
+    const [mua, df] = allData;
+    const {
+      nama,
+      jenisMakeup,
+      produkMakeup,
+      tanggal,
+      minHarga,
+      maxHarga,
+    } = this.state;
+
+    return new Promise(resolve => {
+      const filterNama = name =>
+        nama !== '' ? name.toLowerCase().includes(nama.toLowerCase()) : true;
+
+      const filterJenisMakeup = j =>
+        jenisMakeup !== 'Semua' ? j.includes(jenisMakeup) : true;
+
+      const filterProdukMakeup = p =>
+        produkMakeup !== 'Semua' ? p.includes(produkMakeup) : true;
+
+      const filterMinHarga = muaId => {
+        const hasDF = df.filter(val => val.ownerId === muaId);
+        const hasHarga = hasDF.filter(
+          val => parseInt(val.harga, 10) >= parseInt(minHarga, 10),
+        );
+        if (minHarga === '') {
+          return hasDF.length > 0;
+        }
+        return hasHarga.length > 0;
+      };
+
+      const filterMaxHarga = muaId => {
+        const hasDF = df.filter(val => val.ownerId === muaId);
+        const hasHarga = hasDF.filter(
+          val => parseInt(val.harga, 10) <= parseInt(maxHarga, 10),
+        );
+        if (maxHarga === '') {
+          return hasDF.length > 0;
+        }
+        return hasHarga.length > 0;
+      };
+
+      const newMua = mua.filter(m => {
+        if (
+          filterNama(m.namaLengkap) &&
+          filterJenisMakeup(m.jenisMakeup) &&
+          filterProdukMakeup(m.produkMakeup) &&
+          filterMinHarga(m.uid) &&
+          filterMaxHarga(m.uid)
+        ) {
+          return true;
+        }
+        return false;
+      });
+
+      resolve(newMua);
+    });
+  };
+
+  handleGetMua = async () => {
+    const mua = [];
+    const getMua = await firebase
+      .firestore()
+      .collection('users')
+      .where('isMua', '==', true)
+      .get();
+    getMua.forEach(snapshot => {
+      const data = snapshot.data();
+      if (data.uid !== firebase.auth().currentUser.uid) {
+        mua.push(snapshot.data());
+      }
+    });
+    return mua;
+  };
+
+  handleGetDaftarHarga = async () => {
+    const listHarga = [];
+    const df = await firebase
+      .firestore()
+      .collection('daftar-harga')
+      .get();
+    df.forEach(snapshot => {
+      listHarga.push(snapshot.data());
+    });
+    return listHarga;
+  };
+
   handleSearch = async () => {
-    // const mua = [];
-    // const getMua = await firebase
-    //   .firestore()
-    //   .collection('users')
-    //   .where('isMua', '==', true)
-    //   .get();
-    // getMua.forEach(snapshot => {
-    //   const data = snapshot.data();
-    //   if (data.uid !== firebase.auth().currentUser.uid) {
-    //     mua.push(snapshot.data());
-    //   }
-    // });
-    this.props.navigation.push('SearchResult');
+    const { navigation } = this.props;
+    const allData = await Promise.all([
+      this.handleGetMua(),
+      this.handleGetDaftarHarga(),
+    ]);
+    const filteredMua = await this.filterMua(allData);
+    navigation.push('SearchResult', { mua: filteredMua });
   };
 
   render() {
+    const {
+      jenisMakeup,
+      produkMakeup,
+      maxHarga,
+      minHarga,
+      tanggal,
+      nama,
+    } = this.state;
+
     return (
       <ScrollView style={styles.scroll}>
         <View style={styles.searchRoot}>
           <View style={styles.searchBox}>
-            <TextInput placeholder="Cari MUA" style={styles.searchInput} />
+            <TextInput
+              placeholder="Cari MUA"
+              style={styles.searchInput}
+              value={nama}
+              onChangeText={this.handleInput('nama')}
+            />
             <Icon name="magnify" size={24} />
           </View>
         </View>
         <Text style={styles.label}>Jenis Makeup</Text>
         <View style={styles.selectField}>
-          <Picker selectedValue="natural">
-            <Picker.Item label="Natural" value="Natural" />
-            <Picker.Item label="Flawless" value="Flawless" />
-            <Picker.Item label="Korean" value="Korean" />
-            <Picker.Item label="Payas Agung" value="Payas Agung" />
-            <Picker.Item label="Graduation" value="Graduation" />
+          <Picker
+            selectedValue={jenisMakeup}
+            onValueChange={this.handleInput('jenisMakeup')}
+          >
+            {['Semua', ...jMakeup].map(jm => (
+              <Picker.Item key={jm} label={jm} value={jm} />
+            ))}
           </Picker>
         </View>
-        <Text style={styles.label}>Jenis Produk</Text>
+        <Text style={styles.label}>Produk Makeup</Text>
         <View style={styles.selectField}>
-          <Picker selectedValue="High End">
-            <Picker.Item label="High End" value="High End" />
-            <Picker.Item label="Drugstore" value="Drug Store" />
+          <Picker
+            selectedValue={produkMakeup}
+            onValueChange={this.handleInput('produkMakeup')}
+          >
+            {['Semua', ...pMakeup].map(pm => (
+              <Picker.Item key={pm} label={pm} value={pm} />
+            ))}
           </Picker>
         </View>
         <Text style={styles.label}>Cari Berdasarkan Tanggal</Text>
@@ -108,7 +182,7 @@ class SearchScreen extends React.Component {
             height: 48,
             marginBottom: 8,
           }}
-          date={new Date()}
+          date={tanggal}
           mode="date"
           placeholder="Pilih tanggal"
           format="YYYY-MM-DD"
@@ -130,7 +204,7 @@ class SearchScreen extends React.Component {
               borderColor: '#ddd',
             },
           }}
-          // onDateChange={this.handleChangeText('tanggalLahir')}
+          onDateChange={this.handleInput('tanggal')}
         />
         <Text style={styles.label}>Urut berdasarkan harga</Text>
         <View>
@@ -138,11 +212,15 @@ class SearchScreen extends React.Component {
             placeholder="Min"
             style={styles.textInput}
             keyboardType="numeric"
+            value={minHarga}
+            onChangeText={this.handleInput('minHarga')}
           />
           <TextInput
             placeholder="Max"
             style={styles.textInput}
             keyboardType="numeric"
+            value={maxHarga}
+            onChangeText={this.handleInput('maxHarga')}
           />
         </View>
         <TouchableOpacity onPress={this.handleSearch}>

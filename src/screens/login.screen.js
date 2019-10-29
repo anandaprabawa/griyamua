@@ -63,10 +63,8 @@ class LoginScreen extends React.Component {
       const currUser = getU.data();
       this.setState({ isLoading: false });
       navigation.navigate(currUser.isMua ? 'MainMua' : 'Main');
-      return null;
     } catch (error) {
       this.setState({ isLoading: false });
-      return null;
     }
   };
 
@@ -75,21 +73,27 @@ class LoginScreen extends React.Component {
 
     try {
       this.setState({ isLoading: true });
-      await firebase
+      const getUser = await firebase
         .auth()
         .signInWithEmailAndPassword(values.email, values.password);
+      const getU = await firebase
+        .firestore()
+        .collection('users')
+        .doc(getUser.user.uid)
+        .get();
+      const currUser = getU.data();
       actions.setSubmitting(false);
-      return navigation.navigate('Main');
+      navigation.navigate(currUser.isMua ? 'MainMua' : 'Main');
     } catch (error) {
       actions.setFieldError('email', 'Pengguna tidak ditemukan');
       actions.setSubmitting(false);
       this.setState({ isLoading: false });
-      return null;
     }
   };
 
   handlePressLupaPassword = async () => {
-    this.props.navigation.navigate('LupaPassword');
+    const { navigation } = this.props;
+    navigation.navigate('LupaPassword');
   };
 
   render() {

@@ -9,8 +9,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Formik } from 'formik';
-// import firebase from 'react-native-firebase';
+import firebase from 'react-native-firebase';
 import { theme } from '../theme';
+import { jMakeup, pMakeup } from './daftar-mua3.screen';
 
 class CreatePricelistScreen extends React.Component {
   static navigationOptions = {
@@ -18,15 +19,15 @@ class CreatePricelistScreen extends React.Component {
   };
 
   handleSubmit = async (values, actions) => {
-    // const user = firebase.auth().currentUser;
-    // await firebase
-    //   .firestore()
-    //   .collection('users')
-    //   .doc(user.uid)
-    //   .collection('daftar-harga')
-    //   .add(values);
-    // actions.setSubmitting(false);
-    this.props.navigation.goBack();
+    const { navigation } = this.props;
+
+    const user = firebase.auth().currentUser;
+    await firebase
+      .firestore()
+      .collection('daftar-harga')
+      .add({ ...values, ownerId: user.uid });
+    actions.setSubmitting(false);
+    navigation.goBack();
   };
 
   render() {
@@ -34,7 +35,8 @@ class CreatePricelistScreen extends React.Component {
       <Formik
         initialValues={{
           nama: '',
-          jenisMakeup: 'Natural',
+          jenisMakeup: jMakeup[0],
+          produkMakeup: pMakeup[0],
           layanan: '',
           harga: '',
           lamaPengerjaan: '',
@@ -74,11 +76,24 @@ class CreatePricelistScreen extends React.Component {
                       selectedValue={values.jenisMakeup}
                       onValueChange={val => setFieldValue('jenisMakeup', val)}
                     >
-                      <Picker.Item label="Natural" value="Natural" />
-                      <Picker.Item label="Flawless" value="Flawless" />
-                      <Picker.Item label="Korean" value="Korean" />
-                      <Picker.Item label="Payas Agung" value="Payas Agung" />
-                      <Picker.Item label="Graduation" value="Graduation" />
+                      {jMakeup.map(jm => (
+                        <Picker.Item key={jm} label={jm} value={jm} />
+                      ))}
+                    </Picker>
+                  </View>
+                </View>
+                <View style={styles.formInputWrapper}>
+                  <Text style={styles.label}>Produk Makeup</Text>
+                  <View
+                    style={[styles.formPickerInputWrapper, styles.inputBorder]}
+                  >
+                    <Picker
+                      selectedValue={values.produkMakeup}
+                      onValueChange={val => setFieldValue('produkMakeup', val)}
+                    >
+                      {pMakeup.map(pm => (
+                        <Picker.Item key={pm} label={pm} value={pm} />
+                      ))}
                     </Picker>
                   </View>
                 </View>
@@ -113,6 +128,7 @@ class CreatePricelistScreen extends React.Component {
                     ]}
                     placeholder="contoh: 100000"
                     value={values.harga}
+                    keyboardType="numeric"
                     onChangeText={handleChange('harga')}
                     onBlur={handleBlur('harga')}
                   />

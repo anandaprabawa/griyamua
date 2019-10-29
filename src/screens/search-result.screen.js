@@ -7,7 +7,7 @@ import {
   Image,
   TouchableWithoutFeedback,
 } from 'react-native';
-import image1 from '../assets/beauty-class.jpeg';
+import noImage from '../assets/account-circle.png';
 
 class SearchResultScreen extends React.Component {
   static navigationOptions = {
@@ -15,26 +15,27 @@ class SearchResultScreen extends React.Component {
   };
 
   render() {
-    // const mua = this.props.navigation.getParam('mua');
+    const { navigation } = this.props;
+    const mua = navigation.getParam('mua');
 
     return (
       <ScrollView>
         <View style={{ padding: 16 }}>
-          {[0, 1].map(m => (
+          {mua.map(m => (
             <TouchableWithoutFeedback
-              key={`hasilcari-${m}`}
+              key={`hasilcari-${m.uid}`}
               onPress={() =>
-                this.props.navigation.navigate('SearchResultAccount')
+                navigation.navigate('SearchResultAccount', { mua: m })
               }
             >
               <View style={styles.muaCardRoot}>
                 <Image
-                  source={image1}
+                  source={m.avatar ? { uri: m.avatar } : noImage}
                   style={styles.muaCardImage}
                   resizeMode="cover"
                 />
                 <View>
-                  <Text style={styles.muaCardName}>Eldy Pramana</Text>
+                  <Text style={styles.muaCardName}>{m.namaLengkap}</Text>
                 </View>
               </View>
             </TouchableWithoutFeedback>

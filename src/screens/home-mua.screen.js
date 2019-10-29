@@ -14,7 +14,7 @@ import Swiper from 'react-native-swiper-flatlist';
 import Logo from '../components/navbar/logo.component';
 import { theme } from '../theme';
 
-import image1 from '../assets/swiper/slider-1.png';
+import image1 from '../assets/account-circle.png';
 import image2 from '../assets/swiper/slider-2.jpg';
 import image3 from '../assets/swiper/slider-3.jpg';
 import beautyClassImage from '../assets/beauty-class.jpeg';
@@ -51,12 +51,12 @@ class HomeScreen extends React.Component {
         <ScrollView>
           <View style={styles.accountWrapper}>
             <Image
-              source={user ? user.photo || image1 : image1}
+              source={user && user.avatar ? { uri: user.avatar } : image1}
               resizeMode="cover"
               style={styles.accountImage}
             />
             <Text style={styles.accountName}>
-              {user ? user.namaLengkap : null}
+              {user && (user.namaLengkap || user.email || null)}
             </Text>
           </View>
 

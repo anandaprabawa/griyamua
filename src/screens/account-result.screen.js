@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Rating } from 'react-native-ratings';
+import firebase from 'react-native-firebase';
 import image from '../assets/account-circle.png';
 import { theme } from '../theme';
 
@@ -23,11 +24,34 @@ class AccountScreen extends React.Component {
     super(props);
     this.state = {
       user: props.navigation.getParam('mua'),
+      reviewRating: 0,
     };
   }
 
-  render() {
+  componentDidMount() {
     const { user } = this.state;
+    firebase
+      .firestore()
+      .collection('ulasan')
+      .where('idMua', '==', user.uid)
+      .onSnapshot(snapshot => {
+        const data = [];
+        snapshot.forEach(doc => {
+          data.push({ ...doc.data(), uid: doc.id });
+        });
+        this.calculateRating(data);
+      });
+  }
+
+  calculateRating = reviews => {
+    const reviewsLength = reviews.length;
+    const totalRating = reviews.reduce((prev, curr) => prev + curr.rating, 0);
+    const realRating = totalRating / reviewsLength;
+    this.setState({ reviewRating: realRating });
+  };
+
+  render() {
+    const { user, reviewRating } = this.state;
     const { navigation } = this.props;
     const avatar = user.avatar ? { uri: user.avatar } : image;
 
@@ -48,7 +72,7 @@ class AccountScreen extends React.Component {
             </Text>
             <Rating
               imageSize={16}
-              startingValue={5}
+              startingValue={reviewRating}
               readonly
               style={{
                 alignItems: 'center',

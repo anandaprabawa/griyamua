@@ -20,6 +20,8 @@ export const jMakeup = [
   'Body Painting',
   'Face Painting',
   'Pre-wedding/Wedding',
+  'Beauty Class',
+  'Traditional',
 ];
 
 export const pMakeup = [

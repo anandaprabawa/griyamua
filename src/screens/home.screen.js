@@ -39,9 +39,62 @@ class HomeScreen extends React.Component {
     this.setState({ user: user.data() });
   }
 
+  handleGetMua = async category => {
+    const mua = [];
+    const getMua = await firebase
+      .firestore()
+      .collection('users')
+      .where('isMua', '==', true)
+      .where('jenisMakeup', 'array-contains', category)
+      .get();
+    getMua.forEach(snapshot => {
+      const data = snapshot.data();
+      if (data.uid !== firebase.auth().currentUser.uid) {
+        mua.push(snapshot.data());
+      }
+    });
+    return mua;
+  };
+
+  handleGetDaftarHarga = async () => {
+    const listHarga = [];
+    const df = await firebase
+      .firestore()
+      .collection('daftar-harga')
+      .get();
+    df.forEach(snapshot => {
+      listHarga.push(snapshot.data());
+    });
+    return listHarga;
+  };
+
+  filterMua = allData => {
+    const [mua, df] = allData;
+
+    return new Promise(resolve => {
+      const filterHasDF = m => {
+        const hasDF = df.filter(val => val.ownerId === m.uid);
+        return hasDF.length > 0;
+      };
+
+      const newMua = mua.filter(m => filterHasDF(m));
+
+      resolve(newMua);
+    });
+  };
+
+  handleSearch = category => async () => {
+    const { navigation } = this.props;
+    const allData = await Promise.all([
+      this.handleGetMua(category),
+      this.handleGetDaftarHarga(),
+    ]);
+    const filteredMua = await this.filterMua(allData);
+    navigation.push('SearchResult', { mua: filteredMua });
+  };
+
   render() {
     const { user } = this.state;
-    const { navigation } = this.props;
 
     return (
       <React.Fragment>
@@ -60,9 +113,7 @@ class HomeScreen extends React.Component {
 
           <View style={styles.categoryWrapper}>
             <View style={styles.category}>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('SearchResult')}
-              >
+              <TouchableOpacity onPress={this.handleSearch('Beauty Class')}>
                 <Image
                   source={beautyClassImage}
                   resizeMode="cover"
@@ -76,7 +127,7 @@ class HomeScreen extends React.Component {
             </View>
             <View style={styles.category}>
               <TouchableOpacity
-                onPress={() => navigation.navigate('SearchResult')}
+                onPress={this.handleSearch('Pre-wedding/Wedding')}
               >
                 <Image
                   source={weddingImage}
@@ -90,9 +141,7 @@ class HomeScreen extends React.Component {
               </TouchableOpacity>
             </View>
             <View style={styles.category}>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('SearchResult')}
-              >
+              <TouchableOpacity onPress={this.handleSearch('Graduation')}>
                 <Image
                   source={graduationImage}
                   resizeMode="cover"
@@ -105,9 +154,7 @@ class HomeScreen extends React.Component {
               </TouchableOpacity>
             </View>
             <View style={styles.category}>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('SearchResult')}
-              >
+              <TouchableOpacity onPress={this.handleSearch('Traditional')}>
                 <Image
                   source={payasAgung}
                   resizeMode="cover"

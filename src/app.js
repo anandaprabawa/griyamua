@@ -41,6 +41,7 @@ import DaftarMUA from './screens/daftar-mua.screen';
 import DaftarMUA2 from './screens/daftar-mua2.screen';
 import DaftarMUA3 from './screens/daftar-mua3.screen';
 import RescheduleScreen from './screens/reschedule.screen';
+import DetailBookingResult from './screens/detail-booking-result.screen';
 
 const AuthNavigator = createStackNavigator({
   ChooseAuth: ChooseAuthScreen,
@@ -69,7 +70,7 @@ const SearchAccountTabs = createMaterialTopTabNavigator(
     ResultReview: ReviewScreenResult,
   },
   {
-    navigationOptions: ({ navigation }) => ({
+    navigationOptions: () => ({
       headerTitle: 'MUA',
     }),
     lazy: true,
@@ -94,6 +95,7 @@ const SearchStack = createStackNavigator({
   SearchResultAccount: SearchAccountTabs,
   BeriUlasan: BeriUlasanScreen,
   Pesan: PesanScreen,
+  DetailBookingOnMua: DetailBookingResult,
 });
 
 const BookingStack = createStackNavigator({
@@ -135,6 +137,7 @@ const AccountStack = createStackNavigator({
   IndexAccountTabs: AccountTabs,
   CreatePricelist: CreatePricelistScreen,
   EditProfile: EditProfileScreen,
+  Reschedule: RescheduleScreen,
 });
 
 const MainNavigator = createBottomTabNavigator(

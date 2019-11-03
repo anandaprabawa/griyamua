@@ -8,14 +8,8 @@ import {
 } from 'react-native';
 import { format } from 'date-fns';
 import firebase from 'react-native-firebase';
+import { statusBooking } from './detail-booking.screen';
 import { theme } from '../theme';
-
-export const statusBooking = [
-  'Ditolak',
-  'Menunggu Konfirmasi',
-  'Terkonfirmasi',
-  'Dibatalkan',
-];
 
 class DetailBooking extends React.Component {
   static navigationOptions = {
@@ -51,6 +45,26 @@ class DetailBooking extends React.Component {
     return data.jumlahOrang * data.harga;
   };
 
+  handleTerima = async () => {
+    const { data } = this.state;
+    await firebase
+      .firestore()
+      .collection('pesanan')
+      .doc(data.id)
+      .update({ status: 2 });
+    this.setState(prev => ({ data: { ...prev.data, status: 2 } }));
+  };
+
+  handleTolak = async () => {
+    const { data } = this.state;
+    await firebase
+      .firestore()
+      .collection('pesanan')
+      .doc(data.id)
+      .update({ status: 0 });
+    this.setState(prev => ({ data: { ...prev.data, status: 0 } }));
+  };
+
   handleBatal = async () => {
     const { data } = this.state;
     await firebase
@@ -62,8 +76,7 @@ class DetailBooking extends React.Component {
   };
 
   render() {
-    const { data, fromBooking } = this.state;
-    const { navigation } = this.props;
+    const { data } = this.state;
 
     return (
       <ScrollView style={styles.root}>
@@ -123,29 +136,40 @@ class DetailBooking extends React.Component {
             {statusBooking[data.status]}
           </Text>
         </View>
-        {data.status === 2 && (
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('Reschedule', { data, fromBooking })
-            }
-          >
-            <View
-              style={{
-                backgroundColor: theme.colors.primary,
-                height: 48,
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: 16,
-                marginTop: 24,
-              }}
-            >
-              <Text style={{ color: '#fff', fontSize: 16 }}>
-                Penjadwalan Ulang
-              </Text>
-            </View>
-          </TouchableOpacity>
+        {data.status === 1 && (
+          <>
+            <TouchableOpacity onPress={this.handleTerima}>
+              <View
+                style={{
+                  backgroundColor: theme.colors.primary,
+                  height: 48,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: 8,
+                }}
+              >
+                <Text style={{ color: '#fff', fontSize: 16 }}>Terima</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.handleTolak}>
+              <View
+                style={{
+                  borderColor: theme.colors.primary,
+                  borderWidth: 1,
+                  height: 48,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: 32,
+                }}
+              >
+                <Text style={{ color: theme.colors.primary, fontSize: 16 }}>
+                  Tolak
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </>
         )}
-        {(data.status === 1 || data.status === 2) && (
+        {data.status === 2 && (
           <TouchableOpacity onPress={this.handleBatal}>
             <View
               style={{

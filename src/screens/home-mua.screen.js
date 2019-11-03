@@ -10,18 +10,10 @@ import {
   Dimensions,
 } from 'react-native';
 import firebase from 'react-native-firebase';
-import Swiper from 'react-native-swiper-flatlist';
+import { getMinutes, getHours } from 'date-fns';
 import Logo from '../components/navbar/logo.component';
 import { theme } from '../theme';
-
 import image1 from '../assets/account-circle.png';
-import image2 from '../assets/swiper/slider-2.jpg';
-import image3 from '../assets/swiper/slider-3.jpg';
-import beautyClassImage from '../assets/beauty-class.jpeg';
-import graduationImage from '../assets/graduation.jpeg';
-import payasAgung from '../assets/payas-agung.jpeg';
-import weddingImage from '../assets/wedding.jpeg';
-import TopMUA from '../components/top-mua.component';
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -30,9 +22,15 @@ class HomeScreen extends React.Component {
 
   state = {
     user: null,
+    jadwal: null,
   };
 
   async componentDidMount() {
+    this.fetchUser();
+    this.fetchJadwal();
+  }
+
+  fetchUser = async () => {
     const loggedUser = firebase.auth().currentUser;
     const user = await firebase
       .firestore()
@@ -40,10 +38,40 @@ class HomeScreen extends React.Component {
       .doc(loggedUser.uid)
       .get();
     this.setState({ user: user.data() });
-  }
+  };
+
+  fetchJadwal = () => {
+    const loggedUser = firebase.auth().currentUser;
+    firebase
+      .firestore()
+      .collection('pesanan')
+      .where('muaId', '==', loggedUser.uid)
+      .onSnapshot(snapshot => {
+        const docs = [];
+        snapshot.forEach(doc => {
+          const d = { ...doc.data(), id: doc.id };
+          const time = `${getHours(d.tanggalPesanan.toDate())}:${getMinutes(
+            d.tanggalPesanan.toDate(),
+          )}`;
+          d.time = time;
+
+          if (
+            d.tanggalPesanan.toDate().getUTCDate() === new Date().getUTCDate()
+          ) {
+            docs.push(d);
+          }
+        });
+
+        const sortByTime = docs.sort((a, b) => {
+          return a.tanggalPesanan.toDate() > b.tanggalPesanan.toDate() ? 1 : -1;
+        });
+        this.setState({ jadwal: sortByTime });
+      });
+  };
 
   render() {
-    const { user } = this.state;
+    const { user, jadwal } = this.state;
+    const { navigation } = this.props;
 
     return (
       <React.Fragment>
@@ -63,22 +91,16 @@ class HomeScreen extends React.Component {
           <View style={styles.wrapper}>
             <View style={styles.jadwalWrapper}>
               <Text style={styles.jadwalTitle}>Jadwal Kamu Hari Ini</Text>
-              <View style={styles.listItem}>
-                <Text style={styles.listItemTime}>09.00</Text>
-                <Text style={styles.listItemText}>Judul makeup disini</Text>
-              </View>
-              <View style={styles.listItem}>
-                <Text style={styles.listItemTime}>10.00</Text>
-                <Text style={styles.listItemText}>
-                  lorem ipsum dolor sit amet dolor ipsum dolor site admf ladj
-                  flaksdj flakdj flkaj
-                </Text>
-              </View>
+              {jadwal &&
+                jadwal.map(j => (
+                  <View key={j.time} style={styles.listItem}>
+                    <Text style={styles.listItemTime}>{j.time}</Text>
+                    <Text style={styles.listItemText}>{j.nama}</Text>
+                  </View>
+                ))}
             </View>
 
-            <TouchableOpacity
-              onPress={() => this.props.navigation.navigate('Gallery')}
-            >
+            <TouchableOpacity onPress={() => navigation.navigate('Gallery')}>
               <View style={styles.btnPortfolio}>
                 <Text style={styles.btnPortfolioText}>
                   Upload Portofolio Kamu

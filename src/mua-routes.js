@@ -6,7 +6,7 @@ import {
 } from 'react-navigation';
 import { bottomBarConfig } from './bottom-bar-config';
 import HomeScreen from './screens/home-mua.screen';
-import SearchScreen from './screens/search.screen';
+// import SearchScreen from './screens/search.screen';
 import BookingScreen from './screens/booking-mua.screen';
 import AccountScreen from './screens/account-mua.screen';
 import PricelistScreen from './screens/pricelist-mua.screen';
@@ -14,53 +14,53 @@ import GalleryScreen from './screens/gallery-mua.screen';
 import CreatePricelistScreen from './screens/create-pricelist.screen';
 import ReviewScreen from './screens/review-mua.screen';
 import ScheduleScreen from './screens/schedule-mua.screen';
-import DetailScreen from './screens/detail-booking.screen';
+import DetailScreen from './screens/detail-booking-mua.screen';
 import { theme } from './theme';
 import EditProfileScreen from './screens/edit-profile-mua.screen';
 import Logout from './components/logout.component';
-import SearchResultScreen from './screens/search-result.screen';
+// import SearchResultScreen from './screens/search-result.screen';
 
 const HomeStack = createStackNavigator({
   IndexHome: HomeScreen,
 });
 
-const SearchAccountTabs = createMaterialTopTabNavigator(
-  {
-    ResultProfile: AccountScreen,
-    ResultSchedule: ScheduleScreen,
-    ResultPricelist: PricelistScreen,
-    ResultGallery: GalleryScreen,
-    ResultReview: ReviewScreen,
-  },
-  {
-    navigationOptions: ({ navigation }) => ({
-      headerTitle: 'Akun MUA',
-    }),
-    lazy: true,
-    tabBarOptions: {
-      inactiveTintColor: '#000',
-      activeTintColor: '#000',
-      indicatorStyle: {
-        backgroundColor: theme.colors.primary,
-      },
-      style: {
-        backgroundColor: '#eee',
-        elevation: 0,
-      },
-      scrollEnabled: true,
-    },
-  },
-);
+// const SearchAccountTabs = createMaterialTopTabNavigator(
+//   {
+//     ResultProfile: AccountScreen,
+//     ResultSchedule: ScheduleScreen,
+//     ResultPricelist: PricelistScreen,
+//     ResultGallery: GalleryScreen,
+//     ResultReview: ReviewScreen,
+//   },
+//   {
+//     navigationOptions: () => ({
+//       headerTitle: 'Akun MUA',
+//     }),
+//     lazy: true,
+//     tabBarOptions: {
+//       inactiveTintColor: '#000',
+//       activeTintColor: '#000',
+//       indicatorStyle: {
+//         backgroundColor: theme.colors.primary,
+//       },
+//       style: {
+//         backgroundColor: '#eee',
+//         elevation: 0,
+//       },
+//       scrollEnabled: true,
+//     },
+//   },
+// );
 
-const SearchStack = createStackNavigator({
-  IndexSearch: SearchScreen,
-  SearchResult: SearchResultScreen,
-  SearchResultAccount: SearchAccountTabs,
-});
+// const SearchStack = createStackNavigator({
+//   IndexSearch: SearchScreen,
+//   SearchResult: SearchResultScreen,
+//   SearchResultAccount: SearchAccountTabs,
+// });
 
 const BookingStack = createStackNavigator({
   IndexBooking: BookingScreen,
-  DetailBooking: DetailScreen,
+  DetailBookingMua: DetailScreen,
 });
 
 const AccountTabs = createMaterialTopTabNavigator(
@@ -96,6 +96,7 @@ const AccountStack = createStackNavigator({
   IndexAccountTabs: AccountTabs,
   CreatePricelist: CreatePricelistScreen,
   EditProfile: EditProfileScreen,
+  DetailBookingMuaOnProfile: DetailScreen,
 });
 
 const MainNavigator = createBottomTabNavigator(

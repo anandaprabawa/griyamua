@@ -5,128 +5,170 @@ import {
   Text,
   StyleSheet,
   TextInput,
-  Picker,
   TouchableOpacity,
 } from 'react-native';
 import DatePicker from 'react-native-datepicker';
+import firebase from 'react-native-firebase';
+import {
+  getHours,
+  getMinutes,
+  setMinutes,
+  setHours,
+  addMinutes,
+} from 'date-fns';
 import { theme } from '../theme';
-// import firebase from 'react-native-firebase';
 
-class PesanScreen extends React.Component {
+class RescheduleScreen extends React.Component {
   static navigationOptions = {
-    title: 'Pesananmu',
+    title: 'Jadwal Ulang',
   };
 
-  // state = {
-  //   mua: {},
-  //   item: {},
-  //   pemesan: {},
-  //   tanggal: '',
-  //   jam: '',
-  //   jumlahOrang: 1,
-  //   alamat: '',
-  //   infoTambahan: '',
-  // };
+  constructor(props) {
+    super(props);
+    this.d = props.navigation.getParam('data');
+    this.state = {
+      data: {
+        ...this.d,
+        tanggalPesanan: this.d.tanggalPesanan.toDate(),
+        akhirTanggalPesanan: this.d.akhirTanggalPesanan.toDate(),
+        jamPesanan: this.d.tanggalPesanan.toDate(),
+      },
+      error: '',
+    };
+  }
 
   componentDidMount() {
-    // const mua = this.props.navigation.getParam('mua');
-    // const item = this.props.navigation.getParam('item');
-    // const getMe = firebase
+    // const { currentUser } = firebase.auth();
+    // firebase
     //   .firestore()
     //   .collection('users')
-    //   .doc(firebase.auth().currentUser.uid)
+    //   .doc(currentUser.uid)
     //   .get()
-    //   .then(doc => {
-    //     this.setState({ mua, item, pemesan: doc.data() });
+    //   .then(user => {
+    //     this.setState({ user: user.data() });
     //   });
   }
 
-  // handleChangeInput = field => val => {
-  //   this.setState({ [field]: val });
-  // };
+  handleChangeInput = field => val => {
+    this.setState(prev => ({ data: { ...prev.data, [field]: val } }));
+  };
+
+  handleChangeInputDateTime = field => (valString, valDate) => {
+    this.setState(prev => ({ data: { ...prev.data, [field]: valDate } }));
+  };
+
+  validateJadwal = async () => {
+    const { mua } = this.state;
+    return firebase
+      .firestore()
+      .collection('pesanan')
+      .where('muaId', '==', mua.uid)
+      .get()
+      .then(snapshot => {
+        const tanggalPesanan = this.calcTanggalPesanan();
+        const da = snapshot.docs.some(doc => {
+          const d = { ...doc.data(), id: doc.id };
+          if (
+            tanggalPesanan.startDateTime >= d.tanggalPesanan.toDate() &&
+            tanggalPesanan.startDateTime <= d.akhirTanggalPesanan.toDate()
+          ) {
+            return true;
+          }
+          return false;
+        });
+        if (da) {
+          return Promise.reject(new Error('Pilih tanggal atau jam lain'));
+        }
+        return Promise.resolve();
+      });
+  };
+
+  validateForm = async () => {
+    const { data } = this.state;
+    if (data.tanggalPesanan === null || data.jamPesanan === null) {
+      return Promise.reject();
+    }
+    return Promise.resolve();
+  };
+
+  calcTanggalPesanan = () => {
+    const { data } = this.state;
+    const startDateTime = setHours(
+      setMinutes(data.tanggalPesanan, getMinutes(data.jamPesanan)),
+      getHours(data.jamPesanan),
+    );
+
+    const endDateTime = addMinutes(
+      startDateTime,
+      this.calcEstimasiPengerjaan(data.jumlahOrang, data.lamaPengerjaan),
+    );
+
+    return { startDateTime, endDateTime };
+  };
 
   handlePesan = async () => {
-    // await firebase
-    //   .firestore()
-    //   .collection('pesanan')
-    //   .add(this.state);
-    this.props.navigation.goBack();
+    const { navigation } = this.props;
+    const { data } = this.state;
+    try {
+      this.setState({ error: '' });
+      await this.validateForm();
+      await this.validateJadwal();
+      const tanggalPesan = this.calcTanggalPesanan();
+      const detailPesanan = {
+        ...data,
+        tanggalPesanan: tanggalPesan.startDateTime,
+        akhirTanggalPesanan: tanggalPesan.endDateTime,
+        status: 1,
+      };
+      await firebase
+        .firestore()
+        .collection('pesanan')
+        .doc(data.id)
+        .set(detailPesanan, { merge: true });
+      // navigation.navigate('DetailBooking', { data: detailPesanan });
+      navigation.pop(2);
+    } catch (error) {
+      this.setState({ error: error.message });
+    }
+  };
+
+  calcEstimasiPengerjaan = (jumlahOrang, lamaPengerjaan) => {
+    return jumlahOrang * lamaPengerjaan;
+  };
+
+  caclTotalHarga = (jumlahOrang, harga) => {
+    return jumlahOrang * harga;
   };
 
   render() {
-    // const mua = this.props.navigation.getParam('mua');
-    // const item = this.props.navigation.getParam('item');
+    const { data, error } = this.state;
 
     return (
       <React.Fragment>
         <ScrollView>
-          {/* <View style={{ backgroundColor: '#ffebee', padding: 16 }}>
-            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>
-              Makeup Luar Biasa
-            </Text>
-            <Text>MUA: Eldy Pramana</Text>
-            <Text>Jenis Makeup: Flawless</Text>
-            <Text>Layanan: Hairdo</Text>
-            <Text>Lama Pengerjaan: 2 jam</Text>
-            <Text>Harga: Rp 300.000</Text>
-            <View
-              style={{
-                borderBottomWidth: 1,
-                borderBottomColor: '#ccc',
-                marginVertical: 8,
-              }}
-            />
-            <Text>Jumlah orang: 1</Text>
-            <Text>Estimasi pengerjaan: 2 jam</Text>
-            <Text>Total harga: Rp 300.000</Text>
-          </View> */}
           <View style={styles.root}>
-            {/* <View style={styles.fieldWrapper}>
-              <Text>Nama</Text>
-              <TextInput
-                style={styles.field}
-                onChangeText={this.handleChangeInput('namaPemesan')}
-              />
-            </View> */}
-            {/* <View style={styles.fieldWrapper}>
-              <Text>Jenis Makeup</Text>
-              <View
-                style={{
-                  borderWidth: 1,
-                  borderColor: '#ddd',
-                  borderRadius: 4,
-                  marginTop: 4,
-                }}
-              >
-                <Picker selectedValue="">
-                  <Picker.Item label="Natural" value="Natural" />
-                  <Picker.Item label="Natural" value="Natural" />
-                  <Picker.Item label="Flawless" value="Flawless" />
-                  <Picker.Item label="Korean" value="Korean" />
-                  <Picker.Item label="Payas Agung" value="Payas Agung" />
-                  <Picker.Item label="Graduation" value="Graduation" />
-                </Picker>
-              </View>
-            </View> */}
             <View style={styles.fieldWrapper}>
               <Text>Nama kamu</Text>
               <TextInput
                 style={styles.field}
-                // onChangeText={this.handleChangeInput('jumlahOrang')}
+                value={data && (data.namaLengkap || '')}
+                editable={false}
               />
             </View>
             <View style={styles.fieldWrapper}>
               <Text>No. Hp/Telepon</Text>
               <TextInput
                 style={styles.field}
-                // onChangeText={this.handleChangeInput('jumlahOrang')}
+                value={data && (data.telepon || '')}
+                onChangeText={this.handleChangeInput('telepon')}
               />
             </View>
             <View style={styles.fieldWrapper}>
               <Text>Alamat kamu</Text>
               <TextInput
                 style={styles.field}
-                // onChangeText={this.handleChangeInput('jumlahOrang')}
+                value={data && (data.alamatLengkap || '')}
+                onChangeText={this.handleChangeInput('alamatLengkap')}
               />
             </View>
             <View style={styles.fieldWrapper}>
@@ -137,10 +179,10 @@ class PesanScreen extends React.Component {
                   height: 48,
                   marginTop: 4,
                 }}
-                date={new Date()}
+                date={data.tanggalPesanan}
                 mode="date"
                 placeholder="Pilih tanggal"
-                format="YYYY-MM-DD"
+                format="DD MMMM YYYY"
                 confirmBtnText="Ok"
                 cancelBtnText="Batal"
                 customStyles={{
@@ -159,9 +201,7 @@ class PesanScreen extends React.Component {
                     borderColor: '#ddd',
                   },
                 }}
-                // onDateChange={tanggal => {
-                //   this.setState({ tanggal });
-                // }}
+                onDateChange={this.handleChangeInputDateTime('tanggalPesanan')}
               />
             </View>
             <View style={styles.fieldWrapper}>
@@ -172,7 +212,7 @@ class PesanScreen extends React.Component {
                   height: 48,
                   marginTop: 4,
                 }}
-                date={new Date()}
+                date={data.jamPesanan}
                 mode="time"
                 placeholder="Pilih jam"
                 format="HH:mm"
@@ -194,52 +234,16 @@ class PesanScreen extends React.Component {
                     borderColor: '#ddd',
                   },
                 }}
-                // onDateChange={tanggal => {
-                //   this.setState({ tanggal });
-                // }}
+                onDateChange={this.handleChangeInputDateTime('jamPesanan')}
               />
             </View>
-            {/* <View style={styles.fieldWrapper}>
-              <Text>Jam</Text>
-              <DatePicker
-                style={{
-                  width: '100%',
-                  height: 48,
-                  marginTop: 4,
-                }}
-                date={this.state.jam}
-                mode="time"
-                placeholder="Tentukan jam"
-                format="HH:mm"
-                confirmBtnText="Ok"
-                cancelBtnText="Batal"
-                customStyles={{
-                  dateIcon: {
-                    position: 'absolute',
-                    right: 0,
-                    top: 8,
-                    marginLeft: 0,
-                  },
-                  dateInput: {
-                    borderRadius: 4,
-                    height: 48,
-                    width: '100%',
-                    top: 0,
-                    position: 'absolute',
-                    borderColor: '#ddd',
-                  },
-                }}
-                onDateChange={jam => {
-                  this.setState({ jam });
-                }}
-              />
-            </View> */}
             <View style={styles.fieldWrapper}>
-              <Text>Banyak Orang</Text>
+              <Text>Jumlah Orang</Text>
               <TextInput
                 style={styles.field}
                 keyboardType="numeric"
-                // onChangeText={this.handleChangeInput('jumlahOrang')}
+                value={data.jumlahOrang}
+                onChangeText={this.handleChangeInput('jumlahOrang')}
               />
             </View>
             <View style={styles.fieldWrapper}>
@@ -249,9 +253,45 @@ class PesanScreen extends React.Component {
                 multiline
                 placeholder="Optional"
                 numberOfLines={5}
-                // onChangeText={this.handleChangeInput('infoTambahan')}
+                value={data.informasiTambahan}
+                onChangeText={this.handleChangeInput('infoTambahan')}
               />
             </View>
+            {error !== '' && (
+              <Text style={{ color: 'red', marginVertical: 16 }}>
+                {`*${error}`}
+              </Text>
+            )}
+          </View>
+          <View style={{ backgroundColor: '#ffebee', padding: 16 }}>
+            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>
+              {data.nama}
+            </Text>
+            <Text>{`MUA: ${data.namaLengkap}`}</Text>
+            <Text>{`Jenis Makeup: ${data.jenisMakeup}`}</Text>
+            <Text>{`Layanan: ${data.layanan}`}</Text>
+            <Text>{`Lama Pengerjaan: ${data.lamaPengerjaan} menit`}</Text>
+            <Text>{`Harga: Rp ${data.harga}`}</Text>
+            <View
+              style={{
+                borderBottomWidth: 1,
+                borderBottomColor: '#ccc',
+                marginVertical: 8,
+              }}
+            />
+            <Text>{`Jumlah orang: ${data.jumlahOrang}`}</Text>
+            <Text>
+              {`Estimasi pengerjaan: ${this.calcEstimasiPengerjaan(
+                data.jumlahOrang,
+                data.lamaPengerjaan,
+              )} menit`}
+            </Text>
+            <Text>
+              {`Total harga: Rp ${this.caclTotalHarga(
+                data.jumlahOrang,
+                data.harga,
+              )}`}
+            </Text>
             <TouchableOpacity onPress={this.handlePesan}>
               <View
                 style={{
@@ -264,7 +304,7 @@ class PesanScreen extends React.Component {
                 }}
               >
                 <Text style={{ color: '#fff', fontWeight: 'bold' }}>
-                  Update
+                  Simpan
                 </Text>
               </View>
             </TouchableOpacity>
@@ -290,4 +330,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PesanScreen;
+export default RescheduleScreen;

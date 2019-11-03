@@ -6,7 +6,9 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
 } from 'react-native';
-// import firebase from 'react-native-firebase';
+import firebase from 'react-native-firebase';
+import { format } from 'date-fns';
+import { statusBooking } from './detail-booking.screen';
 
 class BookingScreen extends React.Component {
   static navigationOptions = {
@@ -17,59 +19,53 @@ class BookingScreen extends React.Component {
     data: [],
   };
 
-  // componentDidMount() {
-  //   const user = this.props.navigation.getParam('user');
-  //   const loginUser = firebase.auth().currentUser;
+  componentDidMount() {
+    const { currentUser } = firebase.auth();
+    firebase
+      .firestore()
+      .collection('pesanan')
+      .where('muaId', '==', currentUser.uid)
+      .onSnapshot(snapshot => {
+        const temp = [];
+        snapshot.forEach(snap => {
+          temp.push({ ...snap.data(), id: snap.id });
+        });
+        this.setState({ data: temp });
+      });
+  }
 
-  //   if (user && user.uid === loginUser.uid) {
-  //     firebase
-  //       .firestore()
-  //       .collection('pesanan')
-  //       .where('mua.uid', '==', loginUser.uid)
-  //       .onSnapshot(snapshot => {
-  //         const temp = [];
-  //         snapshot.forEach(snap => {
-  //           temp.push(snap.data());
-  //         });
-  //         this.setState({ data: temp });
-  //       });
-  //   } else {
-  //     firebase
-  //       .firestore()
-  //       .collection('pesanan')
-  //       .where('pemesan.uid', '==', loginUser.uid)
-  //       .onSnapshot(snapshot => {
-  //         const temp = [];
-  //         snapshot.forEach(snap => {
-  //           temp.push(snap.data());
-  //         });
-  //         this.setState({ data: temp });
-  //       });
-  //   }
-  // }
+  formatDate = date => {
+    return format(date.toDate(), 'dd MMMM yyyy - HH:mm');
+  };
 
-  // handlePress = val => () => {
-  //   const { navigation } = this.props;
-  //   navigation.push('DetailBooking', { pesanan: val });
-  // };
+  handlePress = val => () => {
+    const { navigation } = this.props;
+    navigation.push('DetailBookingMua', { data: val, fromBooking: true });
+  };
 
   render() {
+    const { data } = this.state;
+
     return (
       <ScrollView>
-        <TouchableWithoutFeedback>
-          <View style={styles.cardRoot}>
-            <Text>Makeup Luar Biasa</Text>
-            <Text>24/10/2019 14.00-16.00</Text>
-            <Text>Jalan Tukad Badung No. 135</Text>
-          </View>
-        </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback>
-          <View style={styles.cardRoot}>
-            <Text>Makeup Luar Biasa</Text>
-            <Text>24/10/2019 14.00-16.00</Text>
-            <Text>Jalan Tukad Badung No. 135</Text>
-          </View>
-        </TouchableWithoutFeedback>
+        {data.length > 0 &&
+          data.map(item => (
+            <TouchableWithoutFeedback
+              onPress={this.handlePress(item)}
+              key={`pesanan-${item.id}`}
+            >
+              <View style={styles.cardRoot}>
+                <Text style={{ fontWeight: 'bold' }}>{item.nama}</Text>
+                <Text>{this.formatDate(item.tanggalPesanan)}</Text>
+                <Text>{item.alamatLengkap}</Text>
+                <Text style={styles.status(item.status)}>
+                  STATUS:
+                  {'  '}
+                  {statusBooking[item.status]}
+                </Text>
+              </View>
+            </TouchableWithoutFeedback>
+          ))}
       </ScrollView>
     );
   }
@@ -81,6 +77,24 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
+  status: c => ({
+    color:
+      (c === 0 && 'red') ||
+      (c === 1 && 'orange') ||
+      (c === 2 && 'green') ||
+      (c === 3 && 'red'),
+    borderWidth: 1,
+    borderColor:
+      (c === 0 && 'red') ||
+      (c === 1 && 'orange') ||
+      (c === 2 && 'green') ||
+      (c === 3 && 'red'),
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    marginTop: 4,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+  }),
 });
 
 export default BookingScreen;

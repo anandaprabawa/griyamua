@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import firebase from 'react-native-firebase';
+import OneSignal from 'react-native-onesignal';
 import {
   getHours,
   getMinutes,
@@ -37,18 +38,6 @@ class RescheduleScreen extends React.Component {
     };
   }
 
-  componentDidMount() {
-    // const { currentUser } = firebase.auth();
-    // firebase
-    //   .firestore()
-    //   .collection('users')
-    //   .doc(currentUser.uid)
-    //   .get()
-    //   .then(user => {
-    //     this.setState({ user: user.data() });
-    //   });
-  }
-
   handleChangeInput = field => val => {
     this.setState(prev => ({ data: { ...prev.data, [field]: val } }));
   };
@@ -58,11 +47,11 @@ class RescheduleScreen extends React.Component {
   };
 
   validateJadwal = async () => {
-    const { mua } = this.state;
+    const { data } = this.state;
     return firebase
       .firestore()
       .collection('pesanan')
-      .where('muaId', '==', mua.uid)
+      .where('muaId', '==', data.muaId)
       .get()
       .then(snapshot => {
         const tanggalPesanan = this.calcTanggalPesanan();
@@ -126,6 +115,14 @@ class RescheduleScreen extends React.Component {
         .doc(data.id)
         .set(detailPesanan, { merge: true });
       // navigation.navigate('DetailBooking', { data: detailPesanan });
+      OneSignal.postNotification(
+        {
+          en: 'Permintaan jadwal ulang pesanan',
+        },
+        { title: 'Ada Pesanan' },
+        data.muaPlayerId,
+        { include_external_user_ids: [] },
+      );
       navigation.pop(2);
     } catch (error) {
       this.setState({ error: error.message });

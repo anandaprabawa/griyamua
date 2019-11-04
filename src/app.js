@@ -6,6 +6,8 @@ import {
   createSwitchNavigator,
   createMaterialTopTabNavigator,
 } from 'react-navigation';
+import AsyncStorage from '@react-native-community/async-storage';
+import OneSignal from 'react-native-onesignal';
 import { bottomBarConfig } from './bottom-bar-config';
 import SplashScreen from './screens/splash.screen';
 import ChooseAuthScreen from './screens/choose-auth.screen';
@@ -161,4 +163,32 @@ const InitialNavigator = createSwitchNavigator({
   App: AppNavigator,
 });
 
-export default createAppContainer(InitialNavigator);
+const AppNav = createAppContainer(InitialNavigator);
+
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    OneSignal.init('abe9a6d2-2a4c-49d6-b14d-cbd9ef6da1c9');
+    OneSignal.addEventListener('ids', this.onIds);
+    OneSignal.enableSound(true);
+    OneSignal.inFocusDisplaying(2);
+  }
+
+  componentWillUnmount() {
+    OneSignal.removeEventListener('ids', this.onIds);
+  }
+
+  onIds = async device => {
+    await AsyncStorage.setItem('@playerId', device.userId);
+  };
+
+  render() {
+    return (
+      <>
+        <AppNav />
+      </>
+    );
+  }
+}
+
+export default App;

@@ -16,6 +16,7 @@ import {
   setHours,
   addMinutes,
 } from 'date-fns';
+import OneSignal from 'react-native-onesignal';
 import { theme } from '../theme';
 
 class PesanScreen extends React.Component {
@@ -110,6 +111,17 @@ class PesanScreen extends React.Component {
     return { startDateTime, endDateTime };
   };
 
+  sendNotif = async mua => {
+    OneSignal.postNotification(
+      {
+        en: 'Ada Pesanan',
+      },
+      { title: 'Ada Pesanan' },
+      mua.playerId,
+      { include_external_user_ids: [] },
+    );
+  };
+
   handlePesan = async () => {
     const { navigation } = this.props;
     const { item, mua, informasiTambahan, jumlahOrang, user } = this.state;
@@ -130,11 +142,14 @@ class PesanScreen extends React.Component {
         namaMua: mua.namaLengkap,
         pemesanId: user.uid,
         status: 1,
+        muaPlayerId: mua.playerId,
+        pemesanPlayerId: user.playerId,
       };
       await firebase
         .firestore()
         .collection('pesanan')
         .add(detailPesanan);
+      await this.sendNotif(mua);
       navigation.navigate('DetailBooking', { data: detailPesanan });
     } catch (error) {
       this.setState({ error: error.message });

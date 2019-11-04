@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { format } from 'date-fns';
 import firebase from 'react-native-firebase';
+import OneSignal from 'react-native-onesignal';
 import { statusBooking } from './detail-booking.screen';
 import { theme } from '../theme';
 
@@ -53,6 +54,15 @@ class DetailBooking extends React.Component {
       .doc(data.id)
       .update({ status: 2 });
     this.setState(prev => ({ data: { ...prev.data, status: 2 } }));
+
+    OneSignal.postNotification(
+      {
+        en: 'Pesanan anda telah diterima',
+      },
+      { title: 'Ada Pesanan' },
+      data.pemesanPlayerId,
+      { include_external_user_ids: [] },
+    );
   };
 
   handleTolak = async () => {
@@ -63,6 +73,15 @@ class DetailBooking extends React.Component {
       .doc(data.id)
       .update({ status: 0 });
     this.setState(prev => ({ data: { ...prev.data, status: 0 } }));
+
+    OneSignal.postNotification(
+      {
+        en: 'Pesanan anda ditolak',
+      },
+      { title: 'Ada Pesanan' },
+      data.pemesanPlayerId,
+      { include_external_user_ids: [] },
+    );
   };
 
   handleBatal = async () => {
@@ -73,6 +92,15 @@ class DetailBooking extends React.Component {
       .doc(data.id)
       .update({ status: 3 });
     this.setState(prev => ({ data: { ...prev.data, status: 3 } }));
+
+    OneSignal.postNotification(
+      {
+        en: 'Pesanan anda dibatalkan',
+      },
+      { title: 'Ada Pesanan' },
+      data.pemesanPlayerId,
+      { include_external_user_ids: [] },
+    );
   };
 
   render() {

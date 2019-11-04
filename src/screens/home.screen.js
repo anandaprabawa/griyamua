@@ -10,6 +10,7 @@ import {
   Dimensions,
 } from 'react-native';
 import firebase from 'react-native-firebase';
+import AsyncStorage from '@react-native-community/async-storage';
 import Logo from '../components/navbar/logo.component';
 import { theme } from '../theme';
 
@@ -37,6 +38,15 @@ class HomeScreen extends React.Component {
       .doc(currentUser.uid)
       .get();
     this.setState({ user: user.data() });
+
+    if (!user.data().playerId) {
+      const playerId = await AsyncStorage.getItem('@playerId');
+      await firebase
+        .firestore()
+        .collection('users')
+        .doc(currentUser.uid)
+        .update({ playerId });
+    }
   }
 
   handleGetMua = async category => {

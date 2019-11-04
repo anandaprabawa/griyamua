@@ -10,10 +10,12 @@ buildscript {
         googlePlayServicesAuthVersion = "16.0.1"
     }
     repositories {
+        maven { url 'https://plugins.gradle.org/m2/' }
         google()
         jcenter()
     }
     dependencies {
+        classpath("gradle.plugin.com.onesignal:onesignal-gradle-plugin:[0.12.1, 0.99.99]")
         classpath("com.android.tools.build:gradle:3.3.2") // 3.4.0 original
         classpath("com.google.gms:google-services:4.2.0")
         classpath("com.google.firebase:firebase-appdistribution-gradle:1.1.0")

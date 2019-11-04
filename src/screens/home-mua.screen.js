@@ -9,6 +9,7 @@ import {
   ScrollView,
   Dimensions,
 } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import firebase from 'react-native-firebase';
 import { getMinutes, getHours } from 'date-fns';
 import Logo from '../components/navbar/logo.component';
@@ -38,6 +39,15 @@ class HomeScreen extends React.Component {
       .doc(loggedUser.uid)
       .get();
     this.setState({ user: user.data() });
+
+    if (!user.data().playerId) {
+      const playerId = await AsyncStorage.getItem('@playerId');
+      await firebase
+        .firestore()
+        .collection('users')
+        .doc(loggedUser.uid)
+        .update({ playerId });
+    }
   };
 
   fetchJadwal = () => {

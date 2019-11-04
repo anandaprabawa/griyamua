@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { format } from 'date-fns';
 import firebase from 'react-native-firebase';
+import OneSignal from 'react-native-onesignal';
 import { theme } from '../theme';
 
 export const statusBooking = [
@@ -59,6 +60,15 @@ class DetailBooking extends React.Component {
       .doc(data.id)
       .update({ status: 3 });
     this.setState(prev => ({ data: { ...prev.data, status: 3 } }));
+
+    OneSignal.postNotification(
+      {
+        en: 'Pesanan dibatalkan oleh pelanggan',
+      },
+      { title: 'Ada Pesanan' },
+      data.muaPlayerId,
+      { include_external_user_ids: [] },
+    );
   };
 
   render() {

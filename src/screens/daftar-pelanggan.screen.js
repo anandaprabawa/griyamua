@@ -56,8 +56,9 @@ class DaftarPelanggan extends React.Component {
           .get();
 
         if (!emailFound.empty) {
-          this.setState({ error: 'Email sudah terpakai', isLoading: true });
+          this.setState({ error: 'Email sudah terpakai', isLoading: false });
         } else {
+          this.setState({ isLoading: false });
           this.props.navigation.navigate('DaftarPelanggan2', {
             email,
             username,

@@ -132,6 +132,7 @@ class DaftarMUA3 extends React.Component {
           jenisMakeup,
           produkMakeup,
         });
+      this.setState({ isLoading: false });
       this.props.navigation.navigate('MainMUA');
     }
   };

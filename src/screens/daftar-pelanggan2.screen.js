@@ -34,7 +34,7 @@ class DaftarPelanggan extends React.Component {
     this.setState({ [stateName]: value });
   };
 
-  handleChangeText = stateName => (value, date) => {
+  handleChangeTextDate = stateName => (value, date) => {
     this.setState({ [stateName]: date });
   };
 
@@ -71,6 +71,7 @@ class DaftarPelanggan extends React.Component {
           jenisKelamin,
         });
 
+      this.setState({ isLoading: false });
       this.props.navigation.navigate('Main');
     }
   };

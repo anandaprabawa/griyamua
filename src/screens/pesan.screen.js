@@ -111,13 +111,13 @@ class PesanScreen extends React.Component {
     return { startDateTime, endDateTime };
   };
 
-  sendNotif = async mua => {
+  sendNotif = async item => {
     OneSignal.postNotification(
       {
         en: 'Ada Pesanan',
       },
       { title: 'Ada Pesanan' },
-      mua.playerId,
+      item.muaPlayerId,
       { include_external_user_ids: [] },
     );
   };
@@ -145,12 +145,14 @@ class PesanScreen extends React.Component {
         muaPlayerId: mua.playerId,
         pemesanPlayerId: user.playerId,
       };
-      await firebase
+      const res = await firebase
         .firestore()
         .collection('pesanan')
         .add(detailPesanan);
-      await this.sendNotif(mua);
-      navigation.navigate('DetailBooking', { data: detailPesanan });
+      await this.sendNotif(detailPesanan);
+      navigation.navigate('DetailBooking', {
+        data: { ...detailPesanan, id: res.id },
+      });
     } catch (error) {
       this.setState({ error: error.message });
     }
@@ -363,7 +365,7 @@ class PesanScreen extends React.Component {
               {item.nama}
             </Text>
             <Text>{`MUA: ${mua.namaLengkap}`}</Text>
-            <Text>{`Jenis Makeup: ${item.jenisMakeup}`}</Text>
+            {/* <Text>{`Jenis Makeup: ${item.jenisMakeup}`}</Text> */}
             <Text>{`Layanan: ${item.layanan}`}</Text>
             <Text>{`Lama Pengerjaan: ${item.lamaPengerjaan} menit`}</Text>
             <Text>{`Harga: Rp ${item.harga}`}</Text>

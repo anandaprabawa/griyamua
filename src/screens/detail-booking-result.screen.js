@@ -55,44 +55,6 @@ class DetailBooking extends React.Component {
     return data.jumlahOrang * data.harga;
   };
 
-  handleTerima = async () => {
-    const { data } = this.state;
-    await firebase
-      .firestore()
-      .collection('pesanan')
-      .doc(data.id)
-      .update({ status: 2 });
-    this.setState(prev => ({ data: { ...prev.data, status: 2 } }));
-
-    OneSignal.postNotification(
-      {
-        en: 'Pesanan anda telah diterima',
-      },
-      { title: 'Ada Pesanan' },
-      data.pemesanPlayerId,
-      { include_external_user_ids: [] },
-    );
-  };
-
-  handleTolak = async () => {
-    const { data } = this.state;
-    await firebase
-      .firestore()
-      .collection('pesanan')
-      .doc(data.id)
-      .update({ status: 0 });
-    this.setState(prev => ({ data: { ...prev.data, status: 0 } }));
-
-    OneSignal.postNotification(
-      {
-        en: 'Pesanan anda ditolak',
-      },
-      { title: 'Ada Pesanan' },
-      data.pemesanPlayerId,
-      { include_external_user_ids: [] },
-    );
-  };
-
   handleBatal = async () => {
     const { data } = this.state;
     await firebase
@@ -107,7 +69,7 @@ class DetailBooking extends React.Component {
         en: 'Pesanan anda dibatalkan',
       },
       { title: 'Ada Pesanan' },
-      data.pemesanPlayerId,
+      data.muaPlayerId,
       { include_external_user_ids: [] },
     );
   };

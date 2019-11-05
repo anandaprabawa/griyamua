@@ -32,7 +32,7 @@ class DaftarMUA2 extends React.Component {
     this.setState({ [stateName]: value });
   };
 
-  handleChangeText = stateName => (value, date) => {
+  handleChangeTextDate = stateName => (value, date) => {
     this.setState({ [stateName]: date });
   };
 

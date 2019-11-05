@@ -52,7 +52,7 @@ class ReviewScreen extends React.Component {
                   marginRight: 16,
                 }}
               />
-              <View>
+              <View style={{ flex: 1 }}>
                 <Text style={styles.name}>{val.namaPengulas}</Text>
                 <View style={styles.ratingWrapper}>
                   <Rating

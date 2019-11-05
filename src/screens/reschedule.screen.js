@@ -251,7 +251,7 @@ class RescheduleScreen extends React.Component {
                 placeholder="Optional"
                 numberOfLines={5}
                 value={data.informasiTambahan}
-                onChangeText={this.handleChangeInput('infoTambahan')}
+                onChangeText={this.handleChangeInput('informasiTambahan')}
               />
             </View>
             {error !== '' && (

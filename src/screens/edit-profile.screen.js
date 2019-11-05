@@ -115,7 +115,9 @@ class EditProfileScreen extends React.Component {
                   borderColor: '#ddd',
                 },
               }}
-              onDateChange={val => this.handleInput('tanggalLahir', val)}
+              onDateChange={(val, date) =>
+                this.handleInput('tanggalLahir', val, date)
+              }
             />
           </View>
           <View style={styles.fieldWrapper}>

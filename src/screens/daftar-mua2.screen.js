@@ -32,6 +32,10 @@ class DaftarMUA2 extends React.Component {
     this.setState({ [stateName]: value });
   };
 
+  handleChangeText = stateName => (value, date) => {
+    this.setState({ [stateName]: date });
+  };
+
   handleSelanjutnya = async () => {
     const {
       email,
@@ -136,7 +140,7 @@ class DaftarMUA2 extends React.Component {
                   borderColor: '#ddd',
                 },
               }}
-              onDateChange={this.handleChangeText('tanggalLahir')}
+              onDateChange={this.handleChangeTextDate('tanggalLahir')}
             />
             <Text style={styles.inputLabel}>Jenis Kelamin</Text>
             <RadioForm

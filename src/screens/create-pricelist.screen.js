@@ -27,7 +27,7 @@ class CreatePricelistScreen extends React.Component {
       .collection('daftar-harga')
       .add({ ...values, ownerId: user.uid });
     actions.setSubmitting(false);
-    navigation.goBack();
+    navigation.pop(2);
   };
 
   render() {

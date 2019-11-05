@@ -34,6 +34,10 @@ class DaftarPelanggan extends React.Component {
     this.setState({ [stateName]: value });
   };
 
+  handleChangeText = stateName => (value, date) => {
+    this.setState({ [stateName]: date });
+  };
+
   handleDaftar = async () => {
     const {
       email,
@@ -145,7 +149,7 @@ class DaftarPelanggan extends React.Component {
                   borderColor: '#ddd',
                 },
               }}
-              onDateChange={this.handleChangeText('tanggalLahir')}
+              onDateChange={this.handleChangeTextDate('tanggalLahir')}
             />
             <Text style={styles.inputLabel}>Jenis Kelamin</Text>
             <RadioForm

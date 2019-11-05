@@ -89,14 +89,14 @@ class DetailBooking extends React.Component {
           <Text style={styles.label}>Alamat</Text>
           <Text style={styles.data}>{data.alamatLengkap}</Text>
         </View>
-        <View style={styles.fieldWrapper}>
+        {/* <View style={styles.fieldWrapper}>
           <Text style={styles.label}>Jenis Makeup</Text>
           <Text style={styles.data}>{data.jenisMakeup}</Text>
         </View>
         <View style={styles.fieldWrapper}>
           <Text style={styles.label}>Produk Makeup</Text>
           <Text style={styles.data}>{data.produkMakeup}</Text>
-        </View>
+        </View> */}
         <View style={styles.fieldWrapper}>
           <Text style={styles.label}>MUA</Text>
           <Text style={styles.data}>{data.namaMua}</Text>

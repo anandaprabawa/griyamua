@@ -265,7 +265,7 @@ class RescheduleScreen extends React.Component {
               {data.nama}
             </Text>
             <Text>{`MUA: ${data.namaLengkap}`}</Text>
-            <Text>{`Jenis Makeup: ${data.jenisMakeup}`}</Text>
+            {/* <Text>{`Jenis Makeup: ${data.jenisMakeup}`}</Text> */}
             <Text>{`Layanan: ${data.layanan}`}</Text>
             <Text>{`Lama Pengerjaan: ${data.lamaPengerjaan} menit`}</Text>
             <Text>{`Harga: Rp ${data.harga}`}</Text>

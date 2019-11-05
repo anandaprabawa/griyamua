@@ -10,31 +10,48 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import firebase from 'react-native-firebase';
 import { theme } from '../theme';
 
-const Card = ({ item }) => (
-  <View style={styles.cardRoot}>
-    <View style={styles.cardLeft}>
-      <Text style={styles.cardTitle}>{item.nama}</Text>
-      <Text style={styles.cardDesc}>{item.layanan}</Text>
-      <View style={styles.cardDetail}>
-        <Icon name="clock-outline" size={20} style={styles.cardIcon} />
-        <Text style={[styles.cardText, styles.cardHour]}>
-          {`${item.lamaPengerjaan} Menit`}
-        </Text>
+const Card = ({ item }) => {
+  const handleDeletePricelist = async () => {
+    await firebase
+      .firestore()
+      .collection('daftar-harga')
+      .doc(item.id)
+      .delete();
+  };
+
+  return (
+    <View style={styles.cardRoot}>
+      <View style={styles.cardLeft}>
+        <Text style={styles.cardTitle}>{item.nama}</Text>
+        <Text style={styles.cardDesc}>{item.layanan}</Text>
+        <View style={styles.cardDetail}>
+          <Icon name="clock-outline" size={20} style={styles.cardIcon} />
+          <Text style={[styles.cardText, styles.cardHour]}>
+            {`${item.lamaPengerjaan} Menit`}
+          </Text>
+        </View>
+        <View style={styles.cardDetail}>
+          <Icon
+            name="cash"
+            size={20}
+            style={styles.cardIcon}
+            color={theme.colors.primary}
+          />
+          <Text style={[styles.cardPrice, styles.cardText]}>
+            {`Rp ${item.harga}`}
+          </Text>
+        </View>
       </View>
-      <View style={styles.cardDetail}>
-        <Icon
-          name="cash"
-          size={20}
-          style={styles.cardIcon}
-          color={theme.colors.primary}
-        />
-        <Text style={[styles.cardPrice, styles.cardText]}>
-          {`Rp ${item.harga}`}
-        </Text>
+      <View>
+        <TouchableOpacity onPress={handleDeletePricelist}>
+          <View style={styles.buttonWrapper}>
+            <Text style={styles.buttonText}>Delete</Text>
+          </View>
+        </TouchableOpacity>
       </View>
     </View>
-  </View>
-);
+  );
+};
 
 class PricelistScreen extends React.Component {
   static navigationOptions = {
@@ -54,7 +71,7 @@ class PricelistScreen extends React.Component {
       .onSnapshot(snapshot => {
         const tempData = [];
         snapshot.forEach(snap => {
-          tempData.push(snap.data());
+          tempData.push({ ...snap.data(), id: snap.id });
         });
         this.setState({ data: tempData });
       });

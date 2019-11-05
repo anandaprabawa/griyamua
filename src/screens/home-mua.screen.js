@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import firebase from 'react-native-firebase';
-import { getMinutes, getHours } from 'date-fns';
+import { getMinutes, getHours, format } from 'date-fns';
 import Logo from '../components/navbar/logo.component';
 import { theme } from '../theme';
 import image1 from '../assets/account-circle.png';
@@ -66,7 +66,9 @@ class HomeScreen extends React.Component {
           d.time = time;
 
           if (
-            d.tanggalPesanan.toDate().getUTCDate() === new Date().getUTCDate()
+            format(d.tanggalPesanan.toDate(), 'yyyy-MM-dd') ===
+              format(new Date(), 'yyyy-MM-dd') &&
+            d.status === 2
           ) {
             docs.push(d);
           }

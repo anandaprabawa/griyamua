@@ -66,12 +66,24 @@ class ScheduleScreen extends React.Component {
               : [curr],
           };
         }, {});
-        const filterTimeData = Object.keys(newData).reduce((prev, curr) => {
-          const filter = newData[curr].sort((a, b) =>
-            a.tanggalPesanan.toDate() > b.tanggalPesanan.toDate() ? 1 : -1,
-          );
-          return { ...prev, [curr]: filter };
+        const filterStatus = Object.keys(newData).reduce((prev, curr) => {
+          const theData = newData[curr];
+          const filtered = theData.filter(k => k.status === 2);
+          if (filtered.length === 0) {
+            return { ...prev };
+          }
+          return { ...prev, [curr]: filtered };
         }, {});
+
+        const filterTimeData = Object.keys(filterStatus).reduce(
+          (prev, curr) => {
+            const filter = filterStatus[curr].sort((a, b) =>
+              a.tanggalPesanan.toDate() > b.tanggalPesanan.toDate() ? 1 : -1,
+            );
+            return { ...prev, [curr]: filter };
+          },
+          {},
+        );
         this.setState({ data: filterTimeData });
       });
   }

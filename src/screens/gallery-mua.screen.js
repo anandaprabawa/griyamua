@@ -6,6 +6,7 @@ import {
   FlatList,
   ScrollView,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import ImageView from 'react-native-image-view';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -40,6 +41,7 @@ class GalleryScreen extends React.Component {
             source: { uri: snap.data().image },
             width,
             height: width,
+            id: snap.id,
           });
         });
         this.setState({ images: tempData });
@@ -78,17 +80,38 @@ class GalleryScreen extends React.Component {
     });
   };
 
-  renderItem = ({ index, item }) => (
-    <TouchableOpacity onPress={this.handleClickImage(index)}>
-      <Image
-        source={item.source}
-        resizeMode="cover"
-        width={item.width}
-        height={item.height}
-        style={styles.image}
-      />
-    </TouchableOpacity>
-  );
+  renderItem = ({ index, item }) => {
+    const handleDelete = async () => {
+      await firebase
+        .firestore()
+        .collection('users')
+        .doc(firebase.auth().currentUser.uid)
+        .collection('gallery')
+        .doc(item.id)
+        .delete();
+    };
+
+    return (
+      <TouchableOpacity onPress={this.handleClickImage(index)}>
+        <View style={{ position: 'relative' }}>
+          <Image
+            source={item.source}
+            resizeMode="cover"
+            width={item.width}
+            height={item.height}
+            style={styles.image}
+          />
+          <Icon
+            style={{ position: 'absolute', bottom: 8, left: 8, zIndex: 1 }}
+            name="delete"
+            size={32}
+            color="#eee"
+            onPress={handleDelete}
+          />
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   render() {
     const { imageIndex, isImageViewVisible, images } = this.state;

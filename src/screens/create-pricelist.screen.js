@@ -5,21 +5,33 @@ import {
   View,
   Text,
   TextInput,
-  Picker,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import { Formik } from 'formik';
 import firebase from 'react-native-firebase';
+import * as Yup from 'yup';
 import { theme } from '../theme';
-import { jMakeup, pMakeup } from './daftar-mua3.screen';
+
+const validationSchema = Yup.object().shape({
+  nama: Yup.string().required(),
+  harga: Yup.string().required(),
+  lamaPengerjaan: Yup.string().required(),
+});
 
 class CreatePricelistScreen extends React.Component {
   static navigationOptions = {
     title: 'Buat Daftar Harga',
   };
 
+  state = {
+    isLoading: false,
+  };
+
   handleSubmit = async (values, actions) => {
     const { navigation } = this.props;
+
+    this.setState({ isLoading: true });
 
     const user = firebase.auth().currentUser;
     await firebase
@@ -27,29 +39,25 @@ class CreatePricelistScreen extends React.Component {
       .collection('daftar-harga')
       .add({ ...values, ownerId: user.uid });
     actions.setSubmitting(false);
+    this.setState({ isLoading: false });
     navigation.pop(2);
   };
 
   render() {
+    const { isLoading } = this.state;
+
     return (
       <Formik
         initialValues={{
           nama: '',
-          jenisMakeup: jMakeup[0],
-          produkMakeup: pMakeup[0],
           layanan: '',
           harga: '',
           lamaPengerjaan: '',
         }}
+        validationSchema={validationSchema}
         onSubmit={this.handleSubmit}
       >
-        {({
-          handleSubmit,
-          values,
-          handleChange,
-          handleBlur,
-          setFieldValue,
-        }) => (
+        {({ handleSubmit, values, handleChange, handleBlur }) => (
           <React.Fragment>
             <ScrollView>
               <View style={styles.formRoot}>
@@ -66,36 +74,6 @@ class CreatePricelistScreen extends React.Component {
                     onChangeText={handleChange('nama')}
                     onBlur={handleBlur('nama')}
                   />
-                </View>
-                <View style={styles.formInputWrapper}>
-                  <Text style={styles.label}>Jenis Makeup</Text>
-                  <View
-                    style={[styles.formPickerInputWrapper, styles.inputBorder]}
-                  >
-                    <Picker
-                      selectedValue={values.jenisMakeup}
-                      onValueChange={val => setFieldValue('jenisMakeup', val)}
-                    >
-                      {jMakeup.map(jm => (
-                        <Picker.Item key={jm} label={jm} value={jm} />
-                      ))}
-                    </Picker>
-                  </View>
-                </View>
-                <View style={styles.formInputWrapper}>
-                  <Text style={styles.label}>Produk Makeup</Text>
-                  <View
-                    style={[styles.formPickerInputWrapper, styles.inputBorder]}
-                  >
-                    <Picker
-                      selectedValue={values.produkMakeup}
-                      onValueChange={val => setFieldValue('produkMakeup', val)}
-                    >
-                      {pMakeup.map(pm => (
-                        <Picker.Item key={pm} label={pm} value={pm} />
-                      ))}
-                    </Picker>
-                  </View>
                 </View>
                 <View style={styles.formInputWrapper}>
                   <Text style={styles.label}>Lama Pengerjaan</Text>
@@ -149,9 +127,13 @@ class CreatePricelistScreen extends React.Component {
                 </View>
               </View>
             </ScrollView>
-            <TouchableOpacity onPress={handleSubmit}>
+            <TouchableOpacity onPress={handleSubmit} disabled={isLoading}>
               <View style={styles.buttonWrapper}>
-                <Text style={styles.buttonText}>Buat</Text>
+                {isLoading ? (
+                  <ActivityIndicator color="#ffffff" />
+                ) : (
+                  <Text style={styles.buttonText}>Buat</Text>
+                )}
               </View>
             </TouchableOpacity>
           </React.Fragment>

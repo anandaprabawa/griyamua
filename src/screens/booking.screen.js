@@ -30,7 +30,13 @@ class BookingScreen extends React.Component {
         snapshot.forEach(snap => {
           temp.push({ ...snap.data(), id: snap.id });
         });
-        this.setState({ data: temp });
+        const sortedTemp = temp.sort((a, b) => {
+          return (
+            new Date(a.tanggalPesanan.toDate()) -
+            new Date(b.tanggalPesanan.toDate())
+          );
+        });
+        this.setState({ data: sortedTemp });
       });
   }
 
